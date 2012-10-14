@@ -1,0 +1,208 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6896488F162B35F900D719E3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6896488E162B35F900D719E3 /* main.cpp */; };
+		68964891162B35F900D719E3 /* MidasMiner.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 68964890162B35F900D719E3 /* MidasMiner.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		68964888162B35F900D719E3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				68964891162B35F900D719E3 /* MidasMiner.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
+		6896488E162B35F900D719E3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		68964890162B35F900D719E3 /* MidasMiner.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MidasMiner.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		68964887162B35F900D719E3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6896487F162B35F900D719E3 = {
+			isa = PBXGroup;
+			children = (
+				6896488D162B35F900D719E3 /* MidasMiner */,
+				6896488B162B35F900D719E3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6896488B162B35F900D719E3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6896488A162B35F900D719E3 /* MidasMiner */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6896488D162B35F900D719E3 /* MidasMiner */ = {
+			isa = PBXGroup;
+			children = (
+				6896488E162B35F900D719E3 /* main.cpp */,
+				68964890162B35F900D719E3 /* MidasMiner.1 */,
+			);
+			path = MidasMiner;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		68964889162B35F900D719E3 /* MidasMiner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 68964894162B35F900D719E3 /* Build configuration list for PBXNativeTarget "MidasMiner" */;
+			buildPhases = (
+				68964886162B35F900D719E3 /* Sources */,
+				68964887162B35F900D719E3 /* Frameworks */,
+				68964888162B35F900D719E3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MidasMiner;
+			productName = MidasMiner;
+			productReference = 6896488A162B35F900D719E3 /* MidasMiner */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		68964881162B35F900D719E3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 68964884162B35F900D719E3 /* Build configuration list for PBXProject "MidasMiner" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6896487F162B35F900D719E3;
+			productRefGroup = 6896488B162B35F900D719E3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				68964889162B35F900D719E3 /* MidasMiner */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		68964886162B35F900D719E3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6896488F162B35F900D719E3 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		68964892162B35F900D719E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		68964893162B35F900D719E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		68964895162B35F900D719E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		68964896162B35F900D719E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		68964884162B35F900D719E3 /* Build configuration list for PBXProject "MidasMiner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68964892162B35F900D719E3 /* Debug */,
+				68964893162B35F900D719E3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		68964894162B35F900D719E3 /* Build configuration list for PBXNativeTarget "MidasMiner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68964895162B35F900D719E3 /* Debug */,
+				68964896162B35F900D719E3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 68964881162B35F900D719E3 /* Project object */;
+}
