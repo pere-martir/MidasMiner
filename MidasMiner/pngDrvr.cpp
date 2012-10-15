@@ -19,11 +19,14 @@
 #include <assert.h>
 #include <GLUT/glut.h>
 
-#include <vector>
 
-extern "C" {
-#include "pngLoad.h"
-}
+
+
+//#include "boost/assert.hpp"
+
+
+#include "UnitTest++.h"
+#include "Board.h"
 
 
 void display(void);
@@ -35,142 +38,12 @@ int kWindowHeight = 320; /* window height */
 
 
 
-int setupGLTexture(char *image, int width, int height, GLuint texName) 
-{
-    
-    if (image == NULL)
-    {
-        return 0;
-    }
-    
-    printf("(loadTexture) width: %d height: %d\n", width, height); 
-    
-    /* create a new texture object
-     * and bind it to texname (unsigned integer > 0)
-     */
-    glBindTexture(GL_TEXTURE_2D, texName);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, 
-                 GL_RGB, GL_UNSIGNED_BYTE, image);
-    
-    return 1; 
-}
-
-class Board
-{
-public:
-    Board();     
-    
-    void initWithDiagonalLines();
-    void initRandomly();
-    void draw();
-    
-private:
-    typedef unsigned int DiamondIndex;
-    typedef std::vector<std::vector<DiamondIndex> > DiamondArray;
-    
-
-    DiamondArray m_diamondArray;
-    static const unsigned int SIZE = 8;
-    //unsigned int m_diamonds;
-    std::vector<GLuint> m_diamondTextures;
-};
-
-Board::Board()
-{
-    //m_diamonds = 0;
-    const char* filenames[] = {"Blue.png", "Green.png", "Purple.png", "Red.png", "Yellow.png" };
-    for (unsigned int i = 0; i < sizeof(filenames) / sizeof(filenames[0]); ++ i) {
-        unsigned int width = 0, height = 0;
-        char* imageRawData = NULL;
-        int result = pngLoad(const_cast<char*>(filenames[i]), &width, &height, &imageRawData);
-        if (result == 0)
-        {
-            printf("(pngLoad) %s FAILED.\n", filenames[i]);
-            abort();
-        }
-        
-        GLuint textureName = 0;
-        glGenTextures(1, &textureName);
-        assert(textureName != 0);
-        setupGLTexture(imageRawData, width, height, textureName);
-        m_diamondTextures.push_back(textureName);
-    }
-    assert(!m_diamondTextures.empty());
-}
-
-void Board::initRandomly()
-{
-    srand(time(NULL));
-    for (unsigned int i = 0; i < SIZE; ++ i) {
-        std::vector<DiamondIndex> row;
-        //row.resize(SIZE, 0);
-        for (unsigned int j = 0; j < SIZE; ++ j)
-            row.push_back(rand() % m_diamondTextures.size());
-        m_diamondArray.push_back(row);
-    }
-}
-
-void Board::initWithDiagonalLines()
-{
-}
-    
-void Board::draw()
-{
-    glEnable (GL_TEXTURE_2D); 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
-    const unsigned int DIAMOND_SIZE = 40;
-    for (unsigned int i = 0; i < SIZE; ++ i) {
-        for (unsigned int j = 0; j < SIZE; ++ j) {
-            
-            unsigned int left = i * DIAMOND_SIZE, top = j * DIAMOND_SIZE;
-            DiamondIndex d = m_diamondArray[i][j];
-            assert(d < m_diamondTextures.size());
-            glBindTexture (GL_TEXTURE_2D, m_diamondTextures[d]);
-            
-            glBegin (GL_QUADS);
-            
-            glTexCoord2f (0.0f, 0.0f); // upper left 
-            glVertex2f (left, top);
-            
-            glTexCoord2f (1.0f, 0.0f); // upper right
-            glVertex2f (left + DIAMOND_SIZE, top);
-            
-            glTexCoord2f (1.0f, 1.0f); // lower right
-            glVertex2f (left + DIAMOND_SIZE, top + DIAMOND_SIZE);
-            
-            glTexCoord2f (0.0f, 1.0f); // lower left
-            glVertex2f (left, top + DIAMOND_SIZE);
-            
-            glEnd ();
-        }
-    }
-}
-    
-
-//const unsigned int Board::SIZE = 8;
-
-/* int setupGLTexture char* int int int
- * Function loads image from buffer into
- * OpenGL texture.
- */
 
 
+int setupGLTexture(char *image, int width, int height, GLuint texName);
+unsigned int width = 0, height = 0;
 
-
-/*
- * void init void 
- * Load the PNG into an image buffer.
- * Set up OpenGL texture using image buffer.
- */
-   unsigned int width = 0, height = 0;
-
+#if 0
 void init()
 {
 
@@ -204,6 +77,7 @@ void init()
   setupGLTexture(image, width, height, texName);
 
 }
+#endif
 
 
 /*
@@ -267,7 +141,7 @@ void display(void)
         //board->initWithDiagonalLines();
         /*
         std::vector<Board::DiamondIndex> row;
-        for (unsigned i = 0; i < Board::SIZE; ++ i)
+        for (unsigned i = 0; i < Board::m_diamondMatrix.size(); ++ i)
         row.push_back(0);
         row.push_back(1);
         row.push_back(2);
@@ -277,7 +151,7 @@ void display(void)
         row.push_back(2);
         row.push_back(1);
         
-        Board::DiamondArray array;
+        Board::DiamondMatrix array;
         array.push_back(row);
         */
         
@@ -310,10 +184,9 @@ void display(void)
 }
 
 /*
- * void resize int int 
  * Callback function registered to glutReshapeFunc
  */
-void resize (int w, int h)
+void reshape(int w, int h)
 {
   /* window has been resized */
   kWindowWidth = w;
@@ -356,21 +229,25 @@ void keyboard(unsigned char key, int x, int y)
   }
 }
 
+
+
+
+
 int main(int argc, char** argv)
 {
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowSize(kWindowWidth, kWindowHeight);
-  glutCreateWindow("PNG Texture Example");
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(kWindowWidth, kWindowHeight);
+    glutCreateWindow("PNG Texture Example");
   
-  /* glut drivers from source Example 9-1, Texture Mapping 
-   * -RedBook
-   */
-  init();
+    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+    UnitTest::RunAllTests();
+    return 0;
   glutDisplayFunc(display);
-  glutReshapeFunc(resize);
+  glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
   glutMainLoop();
 
   return 0;
 }
+
