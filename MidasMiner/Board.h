@@ -49,16 +49,18 @@ public:
         va_end(vl);
     }
     
+    bool isValidCoordinates(unsigned y, unsigned x) const {
+        return y < m_rows & x < m_columns;
+    }
+    
     unsigned operator () (unsigned y, unsigned x) const {
-        assert(x < m_columns);
-        assert(y < m_rows);
+        assert(isValidCoordinates(y, x));
         unsigned index = y * m_columns + x;
         return m_data[index];
     }
     
     unsigned& operator () (unsigned y, unsigned x) {
-        assert(x < m_columns);
-        assert(y < m_rows);
+        assert(isValidCoordinates(y, x));
         unsigned index = y * m_columns + x;
         return m_data[index];
     }
@@ -70,20 +72,18 @@ public:
         assert(index < m_data.size());
         return m_data[index];
     }
+    
+    bool operator == (const Matrix& other) const { return m_data == other.m_data; }
 };
 
 
+class RandomNumberGenerator;
 
 class Board
 {
     
 private:
     typedef unsigned int DiamondIndex;
-    
-    //static const unsigned int m_diamondMatrix.size() = 8;
-    //unsigned int m_size;
-    //unsigned int m_diamonds;
- 
     size_t m_diamondTypes;
     
 public:
@@ -97,17 +97,26 @@ public:
         m_diamondTypes = diamonds.size();
     }
     
-    void initWithMatrix(const Matrix& m) { m_diamondMatrix = m; }
-    void initRandomly(unsigned size = 8, unsigned diamondTypes = 5);
+    void initRandomly(unsigned size, unsigned diamondTypes, 
+                      RandomNumberGenerator& randNumGenerator);
     unsigned findLines() const;
     
-    unsigned columns () const { return m_diamondMatrix.columns(); }
-    unsigned rows () const { return m_diamondMatrix.rows(); }
+   
+    unsigned columns() const { return m_diamondMatrix.columns(); }
+    unsigned rows() const { return m_diamondMatrix.rows(); }
+    
+    // Swap the positions of the two elements at (y1, x1) and (y2, x2)
+    // Return false if they cannot be swapped, true otherwise.
+    bool swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2);
     
     unsigned operator () (unsigned y, unsigned x) const {
         return m_diamondMatrix(y, x);
     }
 
+// Test helper functions
+public:
+    void initWithMatrix(const Matrix& m) { m_diamondMatrix = m; }
+    const Matrix& matrix() const { return m_diamondMatrix; }
     
 private:
     // It contains the index to m_diamondTexture array.

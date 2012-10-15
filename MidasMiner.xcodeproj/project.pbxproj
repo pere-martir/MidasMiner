@@ -34,6 +34,7 @@
 		68FE0640162C8DA8007A31AB /* Board.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68FE063F162C8DA8007A31AB /* Board.cpp */; };
 		68FE0642162C91B8007A31AB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68FE0641162C91B8007A31AB /* main.cpp */; };
 		68FE0646162C928E007A31AB /* BoardRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68FE0645162C928E007A31AB /* BoardRenderer.cpp */; };
+		68FE064C162CB322007A31AB /* TestRandomNumberGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68FE064B162CB322007A31AB /* TestRandomNumberGenerator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -106,6 +107,8 @@
 		68FE0641162C91B8007A31AB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		68FE0645162C928E007A31AB /* BoardRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoardRenderer.cpp; sourceTree = "<group>"; };
 		68FE0647162C92C3007A31AB /* BoardRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoardRenderer.h; sourceTree = "<group>"; };
+		68FE064A162CAF43007A31AB /* RandomNumberGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberGenerator.h; sourceTree = "<group>"; };
+		68FE064B162CB322007A31AB /* TestRandomNumberGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRandomNumberGenerator.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +157,7 @@
 				68FE063F162C8DA8007A31AB /* Board.cpp */,
 				68FE0645162C928E007A31AB /* BoardRenderer.cpp */,
 				68FE0647162C92C3007A31AB /* BoardRenderer.h */,
+				68FE064A162CAF43007A31AB /* RandomNumberGenerator.h */,
 			);
 			path = MidasMiner;
 			sourceTree = "<group>";
@@ -230,6 +234,7 @@
 			isa = PBXGroup;
 			children = (
 				68FE063B162C8D55007A31AB /* TestBoard.cpp */,
+				68FE064B162CB322007A31AB /* TestRandomNumberGenerator.cpp */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -307,6 +312,7 @@
 				68FE0640162C8DA8007A31AB /* Board.cpp in Sources */,
 				68FE0642162C91B8007A31AB /* main.cpp in Sources */,
 				68FE0646162C928E007A31AB /* BoardRenderer.cpp in Sources */,
+				68FE064C162CB322007A31AB /* TestRandomNumberGenerator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

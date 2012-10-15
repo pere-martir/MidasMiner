@@ -27,6 +27,7 @@
 
 #include "UnitTest++.h"
 #include "BoardRenderer.h"
+#include "RandomNumberGenerator.h"
 
 int kWindowWidth = 320; /* window width */
 int kWindowHeight = 320; /* window height */
@@ -53,9 +54,11 @@ void display(void)
     
     static Board *board = NULL;
     static BoardRenderer *renderer = NULL;
+    static RandomNumberGenerator *rand = NULL;
     if (!board) {
         board = new Board();
-        board->initRandomly();
+        rand = new StandardLibaryRandomNumberGenerator();
+        board->initRandomly(8, 5, *rand);
         renderer = new BoardRenderer();
     }
     renderer->draw(*board);   
@@ -118,6 +121,7 @@ int main(int argc, char** argv)
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
     UnitTest::RunAllTests();
     return 0;
+    
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
