@@ -12,7 +12,7 @@
 #include <vector>
 #include <set>
 #include <assert.h>
-#include <GLUT/glut.h>
+
 
 
 // NOT VALID COMMENT
@@ -83,7 +83,7 @@ private:
     //static const unsigned int m_diamondMatrix.size() = 8;
     //unsigned int m_size;
     //unsigned int m_diamonds;
-    std::vector<GLuint> m_diamondTextures;
+ 
     size_t m_diamondTypes;
     
 public:
@@ -100,12 +100,18 @@ public:
     void initWithMatrix(const Matrix& m) { m_diamondMatrix = m; }
     void initRandomly(unsigned size = 8, unsigned diamondTypes = 5);
     unsigned findLines() const;
-    void draw();
+    
+    unsigned columns () const { return m_diamondMatrix.columns(); }
+    unsigned rows () const { return m_diamondMatrix.rows(); }
+    
+    unsigned operator () (unsigned y, unsigned x) const {
+        return m_diamondMatrix(y, x);
+    }
+
     
 private:
     // It contains the index to m_diamondTexture array.
     Matrix m_diamondMatrix;
-    void LoadTextures();
 };
 
 

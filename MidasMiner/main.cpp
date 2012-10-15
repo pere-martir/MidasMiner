@@ -26,7 +26,7 @@
 
 
 #include "UnitTest++.h"
-#include "Board.h"
+#include "BoardRenderer.h"
 
 int kWindowWidth = 320; /* window width */
 int kWindowHeight = 320; /* window height */
@@ -52,11 +52,13 @@ void display(void)
     glTranslatef (0.375, 0.375, 0);
     
     static Board *board = NULL;
+    static BoardRenderer *renderer = NULL;
     if (!board) {
         board = new Board();
         board->initRandomly();
+        renderer = new BoardRenderer();
     }
-    board->draw();   
+    renderer->draw(*board);   
     
     glDisable(GL_TEXTURE_2D); /* disable texture mapping */
     glutSwapBuffers();
