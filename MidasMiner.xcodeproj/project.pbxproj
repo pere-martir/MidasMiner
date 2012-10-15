@@ -7,19 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6896488F162B35F900D719E3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6896488E162B35F900D719E3 /* main.cpp */; };
-		68964891162B35F900D719E3 /* MidasMiner.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 68964890162B35F900D719E3 /* MidasMiner.1 */; };
+		68964891162B35F900D719E3 /* MidasMiner.1 in Copy Files */ = {isa = PBXBuildFile; fileRef = 68964890162B35F900D719E3 /* MidasMiner.1 */; };
+		68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED6162B372D00F13811 /* OpenGL.framework */; };
+		68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED8162B374100F13811 /* GLUT.framework */; };
+		68F4FEDE162B6DE800F13811 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDD162B6DE800F13811 /* libpng15.a */; };
+		68F4FEE0162B6DFE00F13811 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDF162B6DFE00F13811 /* libz.a */; };
+		68F4FEE2162B6EA600F13811 /* pngLoad.c in Sources */ = {isa = PBXBuildFile; fileRef = 68F4FEE1162B6EA600F13811 /* pngLoad.c */; };
+		68F4FEE4162C166400F13811 /* pngDrvr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F4FEE3162C166400F13811 /* pngDrvr.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		68964888162B35F900D719E3 /* CopyFiles */ = {
+		68964888162B35F900D719E3 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				68964891162B35F900D719E3 /* MidasMiner.1 in CopyFiles */,
+				68964891162B35F900D719E3 /* MidasMiner.1 in Copy Files */,
 			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -28,6 +34,14 @@
 		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
 		6896488E162B35F900D719E3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		68964890162B35F900D719E3 /* MidasMiner.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MidasMiner.1; sourceTree = "<group>"; };
+		68F4FED3162B36F800F13811 /* sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sample.c; sourceTree = "<group>"; };
+		68F4FED6162B372D00F13811 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		68F4FED8162B374100F13811 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		68F4FEDC162B653C00F13811 /* pngLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngLoad.h; sourceTree = "<group>"; };
+		68F4FEDD162B6DE800F13811 /* libpng15.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng15.a; path = ../../../../opt/local/lib/libpng15.a; sourceTree = "<group>"; };
+		68F4FEDF162B6DFE00F13811 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../../../../opt/local/lib/libz.a; sourceTree = "<group>"; };
+		68F4FEE1162B6EA600F13811 /* pngLoad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngLoad.c; sourceTree = "<group>"; };
+		68F4FEE3162C166400F13811 /* pngDrvr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pngDrvr.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +49,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68F4FEE0162B6DFE00F13811 /* libz.a in Frameworks */,
+				68F4FEDE162B6DE800F13811 /* libpng15.a in Frameworks */,
+				68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */,
+				68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +62,10 @@
 		6896487F162B35F900D719E3 = {
 			isa = PBXGroup;
 			children = (
+				68F4FEDF162B6DFE00F13811 /* libz.a */,
+				68F4FEDD162B6DE800F13811 /* libpng15.a */,
+				68F4FED8162B374100F13811 /* GLUT.framework */,
+				68F4FED6162B372D00F13811 /* OpenGL.framework */,
 				6896488D162B35F900D719E3 /* MidasMiner */,
 				6896488B162B35F900D719E3 /* Products */,
 			);
@@ -60,6 +82,10 @@
 		6896488D162B35F900D719E3 /* MidasMiner */ = {
 			isa = PBXGroup;
 			children = (
+				68F4FEE3162C166400F13811 /* pngDrvr.cpp */,
+				68F4FEE1162B6EA600F13811 /* pngLoad.c */,
+				68F4FEDC162B653C00F13811 /* pngLoad.h */,
+				68F4FED3162B36F800F13811 /* sample.c */,
 				6896488E162B35F900D719E3 /* main.cpp */,
 				68964890162B35F900D719E3 /* MidasMiner.1 */,
 			);
@@ -75,7 +101,7 @@
 			buildPhases = (
 				68964886162B35F900D719E3 /* Sources */,
 				68964887162B35F900D719E3 /* Frameworks */,
-				68964888162B35F900D719E3 /* CopyFiles */,
+				68964888162B35F900D719E3 /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -116,7 +142,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6896488F162B35F900D719E3 /* main.cpp in Sources */,
+				68F4FEE2162B6EA600F13811 /* pngLoad.c in Sources */,
+				68F4FEE4162C166400F13811 /* pngDrvr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,6 +198,11 @@
 		68964895162B35F900D719E3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -178,6 +210,11 @@
 		68964896162B35F900D719E3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -201,6 +238,7 @@
 				68964896162B35F900D719E3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
