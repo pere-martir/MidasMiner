@@ -32,9 +32,7 @@
 
 /* Begin PBXFileReference section */
 		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
-		6896488E162B35F900D719E3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		68964890162B35F900D719E3 /* MidasMiner.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MidasMiner.1; sourceTree = "<group>"; };
-		68F4FED3162B36F800F13811 /* sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sample.c; sourceTree = "<group>"; };
 		68F4FED6162B372D00F13811 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		68F4FED8162B374100F13811 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		68F4FEDC162B653C00F13811 /* pngLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngLoad.h; sourceTree = "<group>"; };
@@ -85,8 +83,6 @@
 				68F4FEE3162C166400F13811 /* pngDrvr.cpp */,
 				68F4FEE1162B6EA600F13811 /* pngLoad.c */,
 				68F4FEDC162B653C00F13811 /* pngLoad.h */,
-				68F4FED3162B36F800F13811 /* sample.c */,
-				6896488E162B35F900D719E3 /* main.cpp */,
 				68964890162B35F900D719E3 /* MidasMiner.1 */,
 			);
 			path = MidasMiner;
