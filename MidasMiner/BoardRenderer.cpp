@@ -63,9 +63,9 @@ void BoardRenderer::draw(const Board& board)
         for (unsigned int j = 0; j < board.rows(); ++ j) {
             
             unsigned int left = i * DIAMOND_SIZE, top = j * DIAMOND_SIZE;
-            unsigned d = board(j, i);
-            assert(d < m_diamondTextures.size());
-            glBindTexture (GL_TEXTURE_2D, m_diamondTextures[d]);
+            unsigned diamond = board(j, i);
+            assert(diamond <= m_diamondTextures.size());
+            glBindTexture (GL_TEXTURE_2D, m_diamondTextures[diamond-1]);
             
             glBegin (GL_QUADS);
             

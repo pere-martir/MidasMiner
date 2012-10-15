@@ -119,8 +119,8 @@ int main(int argc, char** argv)
     glutCreateWindow("PNG Texture Example");
     
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-    UnitTest::RunAllTests();
-    return 0;
+    //UnitTest::RunAllTests();
+    //return 0;
     
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);

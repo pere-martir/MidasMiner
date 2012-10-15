@@ -5,6 +5,13 @@
 Board::Board()
 {}
 
+bool Board::isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond)
+{
+    Matrix matrix = m_diamondMatrix;
+    assert(matrix(y, x) == 0);
+    matrix(y, x) = diamond;
+    return 0 != findLines(matrix);
+}
 
 void Board::initRandomly(unsigned size, unsigned diamondTypes, RandomNumberGenerator& rand)
 {
@@ -12,22 +19,29 @@ void Board::initRandomly(unsigned size, unsigned diamondTypes, RandomNumberGener
     m_diamondMatrix = Matrix(size, size);
     for (unsigned int i = 0; i < m_diamondMatrix.columns(); ++ i) {
         for (unsigned int j = 0; j < m_diamondMatrix.rows(); ++ j) {
-            m_diamondMatrix(j, i) = rand.next() % diamondTypes;
+            while (true) {
+                unsigned diamond = 1 + rand.next() % diamondTypes;
+                if (!isLineCreatedByAddingDiamond(j, i, diamond)) {
+                    m_diamondMatrix(j, i) = diamond;
+                    break;
+                }
+            }
         }
     }
 }
 
-unsigned Board::findLines() const
+unsigned Board::findLines(const Matrix& matrix) const
 {
+    unsigned diamondTypes = getMaxElement(matrix);
     unsigned linesFound = 0;
-    for (unsigned d = 0; d < m_diamondTypes; ++ d) {
+    for (unsigned d = 1; d <= diamondTypes; ++ d) {
         
         // Find horizonal lines
-        for (unsigned i = 0; i < m_diamondMatrix.columns(); ++ i) {
-            for (unsigned j = 0; j < m_diamondMatrix.rows(); ++ j) {
+        for (unsigned i = 0; i < matrix.columns(); ++ i) {
+            for (unsigned j = 0; j < matrix.rows(); ++ j) {
                 unsigned x = i;
                 unsigned lineLength = 0;
-                while (x < m_diamondMatrix.columns() && m_diamondMatrix(j, x) == d) {
+                while (x < matrix.columns() && matrix(j, x) == d) {
                     lineLength ++;
                     x ++;
                 }
@@ -40,11 +54,11 @@ unsigned Board::findLines() const
         }
         
         // Find vertical lines
-        for (unsigned i = 0; i < m_diamondMatrix.columns(); ++ i) {
-            for (unsigned j = 0; j < m_diamondMatrix.rows(); ++ j) {
+        for (unsigned i = 0; i < matrix.columns(); ++ i) {
+            for (unsigned j = 0; j < matrix.rows(); ++ j) {
                 unsigned y = j;
                 unsigned lineLength = 0;
-                while (y < m_diamondMatrix.rows() && m_diamondMatrix(y, i) == d) {
+                while (y < matrix.rows() && matrix(y, i) == d) {
                     lineLength ++;
                     y ++;
                 }

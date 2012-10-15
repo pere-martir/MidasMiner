@@ -12,6 +12,7 @@
 class RandomNumberGenerator 
 {
 public:
+    // Return an integer in [0, 2^31 - 1]
     virtual unsigned next() = 0;
 };
 
@@ -45,5 +46,6 @@ public:
         return m_nextNumber;
     }
 };
+
 
 #endif

@@ -10,7 +10,6 @@
 #define MidasMiner_Board_h
 
 #include <vector>
-#include <set>
 #include <assert.h>
 
 
@@ -84,23 +83,28 @@ class Board
     
 private:
     typedef unsigned int DiamondIndex;
-    size_t m_diamondTypes;
+    //size_t m_diamondTypes;
     
 public:
     Board(); 
     Board(const Matrix& m) : m_diamondMatrix(m) 
     {
-        std::set<unsigned> diamonds;
-        for (unsigned i = 0; i < m_diamondMatrix.elements(); ++ i) {
-            diamonds.insert(m_diamondMatrix.getElementByIndex(i));
-        }
-        m_diamondTypes = diamonds.size();
+       // m_diamondTypes = getMaxElement(m_diamondMatrix);
     }
     
     void initRandomly(unsigned size, unsigned diamondTypes, 
                       RandomNumberGenerator& randNumGenerator);
-    unsigned findLines() const;
     
+    
+    unsigned findLines() const { return findLines(m_diamondMatrix); }
+    unsigned findLines(const Matrix& matrix) const;
+    
+    bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
+  
+//
+// Matrix functions
+//
+public:
    
     unsigned columns() const { return m_diamondMatrix.columns(); }
     unsigned rows() const { return m_diamondMatrix.rows(); }
@@ -112,8 +116,10 @@ public:
     unsigned operator () (unsigned y, unsigned x) const {
         return m_diamondMatrix(y, x);
     }
-
+    
+//
 // Test helper functions
+//
 public:
     void initWithMatrix(const Matrix& m) { m_diamondMatrix = m; }
     const Matrix& matrix() const { return m_diamondMatrix; }
@@ -121,6 +127,16 @@ public:
 private:
     // It contains the index to m_diamondTexture array.
     Matrix m_diamondMatrix;
+    
+    static unsigned getMaxElement(const Matrix& matrix) {
+        unsigned maxElement = 0;
+        for (unsigned i = 0; i < matrix.elements(); ++ i) {
+            unsigned element = matrix.getElementByIndex(i);
+            if (element > maxElement) maxElement = element;
+        }
+        assert(maxElement > 0);
+        return maxElement;
+    }
 };
 
 
