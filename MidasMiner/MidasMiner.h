@@ -33,6 +33,8 @@ private:
     // load the textures when running the unit tests.
     BoardRenderer *m_renderer; 
     StandardLibaryRandomNumberGenerator m_randNumGenerator;
+    
+    std::vector<DiamondCoords> m_pickedDiamonds;
 };
 
 

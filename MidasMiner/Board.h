@@ -12,17 +12,8 @@
 #include <vector>
 #include <string>
 #include <assert.h>
+#include "BoardDelegate.h"
 
-
-
-// NOT VALID COMMENT
-#if 0
-// The elements are stored in row-major order while the accessor accepts
-// the parameters in column-major order. This is because it's easier to 
-// stored the elements in row-major order, while I want to make the accessor
-// coincide with the order of the coordinate system of OpenGL and that of the 
-// mathematic subscripts of matrix elements, which is usually (x,y)
-#endif
 class Matrix
 {
 private:
@@ -49,18 +40,18 @@ public:
         va_end(vl);
     }
     
-    bool isValidCoordinates(unsigned y, unsigned x) const {
+    bool inside(unsigned y, unsigned x) const {
         return y < m_rows & x < m_columns;
     }
     
     unsigned operator () (unsigned y, unsigned x) const {
-        assert(isValidCoordinates(y, x));
+        assert(inside(y, x));
         unsigned index = y * m_columns + x;
         return m_data[index];
     }
     
     unsigned& operator () (unsigned y, unsigned x) {
-        assert(isValidCoordinates(y, x));
+        assert(inside(y, x));
         unsigned index = y * m_columns + x;
         return m_data[index];
     }
@@ -79,15 +70,6 @@ public:
 };
 
 
-struct DiamondCoord 
-{
-    unsigned row, col;
-    DiamondCoord(unsigned r = 0, unsigned c = 0) : row(r), col(c) {}
-};
-
-typedef std::vector<DiamondCoord> Line;
-typedef std::vector<Line> Lines;
-
 class RandomNumberGenerator;
 
 class Board
@@ -99,8 +81,8 @@ private:
 
     
 public:
-    Board(); 
-    Board(const Matrix& m) : m_diamondMatrix(m) {}
+    Board() : m_delegate(NULL) {}
+    Board(const Matrix& m) : m_diamondMatrix(m), m_delegate(NULL) {}
     
     void initRandomly(unsigned size, unsigned diamondTypes, 
                       RandomNumberGenerator& randNumGenerator);
@@ -114,6 +96,8 @@ public:
     // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix.
     // The board keeps collapsing until there is no line.
     void collapse();
+    
+    void setDelegate(BoardDelegate* delegate) { m_delegate = delegate; }
   
 //
 // Matrix functions
@@ -125,7 +109,11 @@ public:
     
     // Swap the positions of the two elements at (y1, x1) and (y2, x2)
     // Return false if they cannot be swapped, true otherwise.
-    bool swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2);
+    bool swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2) {
+        return swap(DiamondCoords(y1, x1), DiamondCoords(y2, x2));
+    }
+    
+    bool swap(const DiamondCoords& d1, const DiamondCoords& d2);
     
     unsigned operator () (unsigned y, unsigned x) const {
         return m_diamondMatrix(y, x);
@@ -134,6 +122,8 @@ public:
 private:
     // It contains the index to m_diamondTexture array.
     Matrix m_diamondMatrix;
+    
+    BoardDelegate* m_delegate;
     
     static unsigned getMaxElement(const Matrix& matrix) {
         unsigned maxElement = 0;

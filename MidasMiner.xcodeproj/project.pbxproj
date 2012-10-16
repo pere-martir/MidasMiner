@@ -55,6 +55,7 @@
 		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
 		68CD5DE4162D64B800699AB9 /* MidasMiner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidasMiner.h; sourceTree = "<group>"; };
 		68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidasMiner.cpp; sourceTree = "<group>"; };
+		68CD5DE7162DB67000699AB9 /* BoardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoardDelegate.h; sourceTree = "<group>"; };
 		68F4FED6162B372D00F13811 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		68F4FED8162B374100F13811 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		68F4FEDC162B653C00F13811 /* pngLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngLoad.h; sourceTree = "<group>"; };
@@ -163,6 +164,7 @@
 				68FE064A162CAF43007A31AB /* RandomNumberGenerator.h */,
 				68CD5DE4162D64B800699AB9 /* MidasMiner.h */,
 				68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */,
+				68CD5DE7162DB67000699AB9 /* BoardDelegate.h */,
 			);
 			path = MidasMiner;
 			sourceTree = "<group>";

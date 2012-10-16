@@ -154,7 +154,7 @@ TEST(VerticalCrossHorizontal)
 SUITE(Swap)
 {
 
-TEST(SwapMustCreateLines)
+TEST(SwappingMustCreateLines)
 {
     Matrix m;
     m.initWithElements(4, 4, 
@@ -163,8 +163,8 @@ TEST(SwapMustCreateLines)
                        2, 1, 2, 1,
                        1, 2, 1, 2);
     Board board(m);
-    CHECK(!board.swap(0, 0, 0, 1)); // The first two elements in the first row
-    
+    // Swap the first two elements in the first row
+    CHECK(!board.swap(DiamondCoords(0, 0), DiamondCoords(0, 1))); 
     CHECK(board.matrix() == m);
 }
     
@@ -177,7 +177,8 @@ TEST(CannotSwapDiamondsOfSameColor)
                        2, 1, 2, 1,
                        1, 2, 1, 2);
     Board board(m);
-    CHECK(!board.swap(0, 0, 0, 1)); // The first two elements in the first row
+    // Swap the first two elements in the first row
+    CHECK(!board.swap(DiamondCoords(0, 0), DiamondCoords(0, 1)));
     CHECK(board.matrix() == m);
 }
     

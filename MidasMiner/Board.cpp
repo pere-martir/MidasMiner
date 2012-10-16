@@ -15,9 +15,6 @@ std::string Matrix::string() const
     return ss.str();
 }
 
-Board::Board()
-{}
-
 bool Board::isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond)
 {
     Matrix matrix = m_diamondMatrix;
@@ -63,19 +60,19 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
         // Find horizonal lines
         for (unsigned j = 0; j < matrix.rows(); ++ j) {
             for (unsigned i = 0; i < matrix.columns(); ++ i) {
-                Line line;
+                Coords coords;
                 unsigned x = i;
                 unsigned lineLength = 0;
                 while (x < matrix.columns() && matrix(j, x) == d) {
-                    line.push_back(DiamondCoord(j, x));
+                    coords.push_back(DiamondCoords(j, x));
                     lineLength ++;
                     x ++;
                 }
                 
-                if (line.size() >= 3) {
+                if (coords.size() >= 3) {
                     linesFound ++;
                     i = x;
-                    if (result) result->push_back(line);
+                    if (result) result->push_back(coords);
                 }
             }
         }
@@ -85,9 +82,9 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
             for (unsigned j = 0; j < matrix.rows(); ++ j) {
                 unsigned y = j;
                 unsigned lineLength = 0;
-                Line line;
+                Coords coords;
                 while (y < matrix.rows() && matrix(y, i) == d) {
-                    line.push_back(DiamondCoord(y, i));
+                    coords.push_back(DiamondCoords(y, i));
                     lineLength ++;
                     y ++;
                 }
@@ -95,7 +92,7 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
                 if (lineLength >= 3) {
                     linesFound ++;
                     j = y;
-                    if (result) result->push_back(line);
+                    if (result) result->push_back(coords);
                 }
             }
         }
@@ -110,10 +107,10 @@ bool Board::removeLines()
     if (findLines(m_diamondMatrix, &lines) > 0) {
         Lines::const_iterator lineIt = lines.begin();
         for (; lines.end() != lineIt; ++ lineIt) {
-            const Line& line = *lineIt;
-            Line::const_iterator diamondCoord = line.begin();
-            for (; line.end() != diamondCoord; diamondCoord ++) {
-                m_diamondMatrix(diamondCoord->row, diamondCoord->col) = HOLE;
+            const Coords& line = *lineIt;
+            Coords::const_iterator coord = line.begin();
+            for (; line.end() != coord; coord ++) {
+                m_diamondMatrix(coord->row, coord->col) = HOLE;
             }
         }
         return true;
@@ -122,32 +119,35 @@ bool Board::removeLines()
     }
 }
 
-bool Board::swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2)
+bool Board::swap(const DiamondCoords& d1, const DiamondCoords& d2)
 {
-    assert(m_diamondMatrix.isValidCoordinates(y1, x1));
-    assert(m_diamondMatrix.isValidCoordinates(y2, x2));
-    if (y1 == y2) {
-        if (1 != abs(x1 - x2)) return false;
-    } else if (x1 == x2) {
-        if (1 != abs(y1 - y2)) return false;
-    } else {
+    assert(m_diamondMatrix.inside(d1.row, d1.col));
+    assert(m_diamondMatrix.inside(d2.row, d2.col));
+    if (!d1.isAdjacentTo(d2))
         return false;
-    }
     
-    unsigned d1 = m_diamondMatrix(y1, x1);
-    unsigned d2 = m_diamondMatrix(y2, x2);
-    if (d1 == d2) 
+    unsigned diamondValue1 = m_diamondMatrix(d1.row, d1.col);
+    unsigned diamondValue2 = m_diamondMatrix(d2.row, d2.col);
+    if (diamondValue1 == diamondValue2) 
         return false;
     else {
-        Matrix tmpMatrix = m_diamondMatrix;
-        tmpMatrix(y1, x1) = d2;
-        tmpMatrix(y2, x2) = d1;
+        m_diamondMatrix(d1.row, d1.col) = diamondValue2;
+        m_diamondMatrix(d2.row, d2.col) = diamondValue1;
+        
+        if (m_delegate) {
+            //m_delegate->onAnimateSwap(this, DiamondCoords(y1, x1), DiamondCoords(y2, x2));
+        }
 
-        if (findLines(tmpMatrix) == 0)
+        if (findLines(m_diamondMatrix) == 0) {
+            m_diamondMatrix(d1.row, d1.col) = diamondValue1;
+            m_diamondMatrix(d2.row, d2.col) = diamondValue2;
+            if (m_delegate) {
+               // m_delegate->onAnimateSwap(this, DiamondCoords(y1, x1), DiamondCoords(y2, x2));
+            }
             return false;
-        else
-        {
-            m_diamondMatrix = tmpMatrix;
+        } else {
+           
+            
             return true;
         }
     }
@@ -162,10 +162,10 @@ void Board::collapse()
     unsigned iteration = 0;
     while (true)
     {
-        if (!removeLines()) {
-            // The unit tests may setup a board with holes
-            if (!hasHole())
-                break;
+        if (removeLines()) {
+            //if (m_delegate) m_delegate->onLinesRemoved(this);
+        } else if (!hasHole()) { // The unit tests may setup a board with holes
+            break;
         }
         
         printf("\n--\nbefore collapse:\n%s\n%s", 

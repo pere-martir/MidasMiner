@@ -1,8 +1,9 @@
 #include "BoardRenderer.h"
 #include "pngLoad.h"
 
-BoardRenderer::BoardRenderer()
+BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(false)
 {
+    m_board.setDelegate(this);
     assert(m_diamondTextures.empty());
     
     const char* filenames[] = {"Blue.png", "Green.png", "Purple.png", "Red.png", "Yellow.png" };
@@ -69,60 +70,120 @@ void BoardRenderer::setupProjectAndModelViewMatrix(unsigned windowWidth, unsigne
 }
 
 
-void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight, const Board& board)
+void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
 {
     setupProjectAndModelViewMatrix(windowWidth, windowHeight);
     
+    //glDisable(GL_BLEND);
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     glDisable(GL_DEPTH_TEST);
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     
     glEnable(GL_TEXTURE_2D); 
-   // glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
+    //glDisable(GL_COLOR_MATERIAL);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
     const unsigned int DIAMOND_SIZE = 40; // FIXME
 
-    for (unsigned int i = 0; i < board.columns(); ++ i) {
-        for (unsigned int j = 0; j < board.rows(); ++ j) {
+    for (unsigned int i = 0; i < m_board.columns(); ++ i) {
+        for (unsigned int j = 0; j < m_board.rows(); ++ j) {
             //unsigned primitiveIndex = j * board.columns() + i;
             unsigned int left = i * DIAMOND_SIZE, top = j * DIAMOND_SIZE;
-            unsigned diamond = board(j, i);
+            unsigned diamond = m_board(j, i);
             assert(diamond <= m_diamondTextures.size());
-            glBindTexture (GL_TEXTURE_2D, m_diamondTextures[diamond-1]);
+            glBindTexture(GL_TEXTURE_2D, m_diamondTextures[diamond-1]);
             
             glBegin(GL_QUADS);
             
             glTexCoord2f (0.0f, 0.0f); // upper left 
             glVertex2f(left, top);
-            //glVertex3f(left, top, primitiveIndex);
             
             glTexCoord2f (1.0f, 0.0f); // upper right
             glVertex2f(left + DIAMOND_SIZE, top);
-            //glVertex3f(left + DIAMOND_SIZE, top, primitiveIndex);
             
             glTexCoord2f (1.0f, 1.0f); // lower right
             glVertex2f(left + DIAMOND_SIZE, top + DIAMOND_SIZE);
-            //glVertex3f(left + DIAMOND_SIZE, top + DIAMOND_SIZE, primitiveIndex);
             
             glTexCoord2f (0.0f, 1.0f); // lower left
             glVertex2f(left, top + DIAMOND_SIZE);
-            //glVertex3f(left, top + DIAMOND_SIZE, primitiveIndex);
             
             glEnd();
         }
     }
+
+    if (m_hasPickedDiamond) {    
+        glDisable(GL_TEXTURE_2D);
+        //glEnable(GL_COLOR_MATERIAL);
+        glBegin(GL_LINE_LOOP);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        unsigned int left = m_pickedDiamond.col * DIAMOND_SIZE;
+        unsigned top = m_pickedDiamond.row * DIAMOND_SIZE;
+        glVertex2f(left, top);
+        glVertex2f(left + DIAMOND_SIZE, top);
+        glVertex2f(left + DIAMOND_SIZE, top + DIAMOND_SIZE);
+        glVertex2f(left, top + DIAMOND_SIZE);
+        glEnd();
+        glColor4f(1, 1, 1, 1);
+    }
 }
 
-bool BoardRenderer::pickDiamond(unsigned x, unsigned y, 
-                                unsigned& picked_row, unsigned& picked_col) const
+
+void BoardRenderer::onDiamondsMoved(const Board* sender, 
+                                    const Coords& toCoordsArray, 
+                                    const Coords& fromCoordsArray)
 {
-    picked_row = y / 40;
-    picked_col = x / 40;
+}
+
+
+
+
+
+bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
+{
+#if !defined(USE_PICKING_BY_COLOR_ID)
+    m_hasPickedDiamond = true;
+    coord = DiamondCoords(y / 40, x / 40);
+    m_pickedDiamond = coord;
     return true;
+#else
+    //glDrawBuffer(GL_BACK);
+    /*glBindTexture(GL_TEXTURE_2D, 0);
+     glEnable(GL_TEXTURE_2D);
+     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+     */
+    setupProjectAndModelViewMatrix();
+    renderer->drawInPickingMode(*board);   
+    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    
+    GLubyte pixel[4];
+    //glReadBuffer(GL_BACK);
+    
+    //glReadBuffer(GL_COLOR_ATTACHMENT0);
+    
+    glReadBuffer(GL_BACK);
+    
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(x, viewport[3] - y, 1, 1,
+                 GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixel);
+    GLenum error = glGetError();
+    //if (error != GL_NO_ERROR)
+    //    assert(false && "opengl error");
+    printf("\npicked (%d,%d)", pixel[0], pixel[1]);
+    
+    // draw();
+    //glutPostRedisplay();
+    
+    //glReadBuffer(GL_NONE);
+    //glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+#endif
 }
 
 
