@@ -8,7 +8,7 @@ void GLUTEventHandler::init(int argc, char** argv)
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutCreateWindow("PNG Texture Example");
     
-    m_board.initRandomly(8, 5, m_randNumGenerator);
+    m_board.initRandomly(4, 5, m_randNumGenerator);
 }
 
 void GLUTEventHandler::handleDisplay() 
@@ -47,7 +47,10 @@ void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
                 m_pickedDiamonds.push_back(picked);
             } 
             if (m_pickedDiamonds.size() == 2) {
-                m_board.swap(m_pickedDiamonds[0], m_pickedDiamonds[1]);
+                if (m_board.swap(m_pickedDiamonds[0], m_pickedDiamonds[1])) {
+                    m_board.collapse();
+                }
+                    
                 m_pickedDiamonds.clear();
             }
         }

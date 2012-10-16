@@ -23,7 +23,7 @@ public:
     void handleKeyboard(unsigned char key, int x, int y);
     void handleMouse(int button, int state, int x, int y);
     void handleDisplay();
-
+    void handleIdle() {}
     
 private:
     static const unsigned WINDOW_WIDTH = 40 * 8;

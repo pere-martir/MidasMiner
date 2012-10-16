@@ -23,16 +23,21 @@ void mouse(int button, int state, int x, int y)
     g_eventHandler.handleMouse(button, state, x, y);
 }
 
+void idle()
+{
+    g_eventHandler.handleIdle();
+}
+
 int main(int argc, char** argv)
 {
-#if 0
+#if 2
     g_eventHandler.init(argc, argv);
     
     glutDisplayFunc(display);
     //glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
-    glutMouseFunc(mouse);
+    glutIdleFunc(idle);
     glutMainLoop();
 #else
     UnitTest::RunAllTests();

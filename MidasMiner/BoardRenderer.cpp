@@ -1,8 +1,15 @@
 #include "BoardRenderer.h"
 #include "pngLoad.h"
 
-BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(false)
+
+BoardRenderer* BoardRenderer::s_singleton = NULL;
+
+BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(false), 
+                                             m_animationFinished(true)
 {
+    assert(NULL == BoardRenderer::s_singleton);
+    BoardRenderer::s_singleton = this;
+    
     m_board.setDelegate(this);
     assert(m_diamondTextures.empty());
     
@@ -88,29 +95,29 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
-    const unsigned int DIAMOND_SIZE = 40; // FIXME
-
     for (unsigned int i = 0; i < m_board.columns(); ++ i) {
         for (unsigned int j = 0; j < m_board.rows(); ++ j) {
-            //unsigned primitiveIndex = j * board.columns() + i;
-            unsigned int left = i * DIAMOND_SIZE, top = j * DIAMOND_SIZE;
+            DiamondCoords corrds = DiamondCoords(j, i);
+            if (doesSprtesContainDiamond(corrds)) continue;
+            
+            Pixel pos = getDiamondPosition(corrds);
             unsigned diamond = m_board(j, i);
             assert(diamond <= m_diamondTextures.size());
-            glBindTexture(GL_TEXTURE_2D, m_diamondTextures[diamond-1]);
+            glBindTexture(GL_TEXTURE_2D, m_diamondTextures[diamond - 1]);
             
             glBegin(GL_QUADS);
             
             glTexCoord2f (0.0f, 0.0f); // upper left 
-            glVertex2f(left, top);
+            glVertex2f(pos.x, pos.y);
             
             glTexCoord2f (1.0f, 0.0f); // upper right
-            glVertex2f(left + DIAMOND_SIZE, top);
+            glVertex2f(pos.x + DIAMOND_SIZE, pos.y);
             
             glTexCoord2f (1.0f, 1.0f); // lower right
-            glVertex2f(left + DIAMOND_SIZE, top + DIAMOND_SIZE);
+            glVertex2f(pos.x + DIAMOND_SIZE, pos.y + DIAMOND_SIZE);
             
             glTexCoord2f (0.0f, 1.0f); // lower left
-            glVertex2f(left, top + DIAMOND_SIZE);
+            glVertex2f(pos.x, pos.y + DIAMOND_SIZE);
             
             glEnd();
         }
@@ -118,36 +125,59 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
 
     if (m_hasPickedDiamond) {    
         glDisable(GL_TEXTURE_2D);
-        //glEnable(GL_COLOR_MATERIAL);
+        glLineWidth(2);
         glBegin(GL_LINE_LOOP);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        unsigned int left = m_pickedDiamond.col * DIAMOND_SIZE;
-        unsigned top = m_pickedDiamond.row * DIAMOND_SIZE;
-        glVertex2f(left, top);
-        glVertex2f(left + DIAMOND_SIZE, top);
-        glVertex2f(left + DIAMOND_SIZE, top + DIAMOND_SIZE);
-        glVertex2f(left, top + DIAMOND_SIZE);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        Pixel pos = getDiamondPosition(m_pickedDiamond);
+        glVertex2f(pos.x, pos.y);
+        glVertex2f(pos.x + DIAMOND_SIZE, pos.y);
+        glVertex2f(pos.x + DIAMOND_SIZE, pos.y + DIAMOND_SIZE);
+        glVertex2f(pos.x, pos.y + DIAMOND_SIZE);
         glEnd();
         glColor4f(1, 1, 1, 1);
     }
 }
 
-
-void BoardRenderer::onDiamondsMoved(const Board* sender, 
-                                    const Coords& toCoordsArray, 
-                                    const Coords& fromCoordsArray)
+Pixel BoardRenderer::getDiamondPosition(const DiamondCoords& diamond) const
 {
+    return Pixel(diamond.col * DIAMOND_SIZE, diamond.row * DIAMOND_SIZE);
 }
 
 
+void BoardRenderer::onDiamondsMoved(const Board* sender, 
+                                    const CoordsArray& toCoordsArray, 
+                                    const CoordsArray& fromCoordsArray)
+{
+    return;
+    assert(m_sprites.empty()); // we're not currently animating anything
+    m_sprites.clear();
+    for (unsigned i = 0; i < toCoordsArray.size(); ++ i) {
+        Sprite s;
+        s.diamond = toCoordsArray[i];
+        s.pos = getDiamondPosition(fromCoordsArray[i]);
+        m_sprites.push_back(s);
+    }
+        
+    m_animationFinished = false;
+    glutTimerFunc(100, BoardRenderer::glutTimerHandler, 0);
+    while (!m_animationFinished);
+}
 
+bool BoardRenderer::doesSprtesContainDiamond(const DiamondCoords& d) const
+{
+    SpritesArray::const_iterator s = m_sprites.begin();
+    for (; m_sprites.end() != s; ++ s) {
+        if (s->diamond == d) return true;
+    }
+    return false;
+}
 
 
 bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 {
 #if !defined(USE_PICKING_BY_COLOR_ID)
     m_hasPickedDiamond = true;
-    coord = DiamondCoords(y / 40, x / 40);
+    coord = DiamondCoords(y / DIAMOND_SIZE, x / DIAMOND_SIZE);
     m_pickedDiamond = coord;
     return true;
 #else

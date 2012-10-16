@@ -41,7 +41,7 @@ void Board::initRandomly(unsigned size, unsigned diamondTypes, RandomNumberGener
     
     // Some lines may be formed. Don't care. Let them be the bonus (free) lines
     // for the player.
-    m_futureMatrix = Matrix(size, 100);
+    m_futureMatrix = Matrix(3, size);
     for (unsigned int i = 0; i < m_futureMatrix.columns(); ++ i) {
         for (unsigned int j = 0; j < m_futureMatrix.rows(); ++ j) {
             m_futureMatrix(j, i) = 1 + rand.next() % diamondTypes;
@@ -60,19 +60,19 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
         // Find horizonal lines
         for (unsigned j = 0; j < matrix.rows(); ++ j) {
             for (unsigned i = 0; i < matrix.columns(); ++ i) {
-                Coords coords;
+                CoordsArray coordsArray;
                 unsigned x = i;
                 unsigned lineLength = 0;
                 while (x < matrix.columns() && matrix(j, x) == d) {
-                    coords.push_back(DiamondCoords(j, x));
+                    coordsArray.push_back(DiamondCoords(j, x));
                     lineLength ++;
                     x ++;
                 }
                 
-                if (coords.size() >= 3) {
+                if (coordsArray.size() >= 3) {
                     linesFound ++;
                     i = x;
-                    if (result) result->push_back(coords);
+                    if (result) result->push_back(coordsArray);
                 }
             }
         }
@@ -82,17 +82,17 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
             for (unsigned j = 0; j < matrix.rows(); ++ j) {
                 unsigned y = j;
                 unsigned lineLength = 0;
-                Coords coords;
+                CoordsArray coordsArray;
                 while (y < matrix.rows() && matrix(y, i) == d) {
-                    coords.push_back(DiamondCoords(y, i));
+                    coordsArray.push_back(DiamondCoords(y, i));
                     lineLength ++;
                     y ++;
                 }
                 
-                if (lineLength >= 3) {
+                if (coordsArray.size() >= 3) {
                     linesFound ++;
                     j = y;
-                    if (result) result->push_back(coords);
+                    if (result) result->push_back(coordsArray);
                 }
             }
         }
@@ -107,10 +107,10 @@ bool Board::removeLines()
     if (findLines(m_diamondMatrix, &lines) > 0) {
         Lines::const_iterator lineIt = lines.begin();
         for (; lines.end() != lineIt; ++ lineIt) {
-            const Coords& line = *lineIt;
-            Coords::const_iterator coord = line.begin();
-            for (; line.end() != coord; coord ++) {
-                m_diamondMatrix(coord->row, coord->col) = HOLE;
+            const CoordsArray& line = *lineIt;
+            CoordsArray::const_iterator coords = line.begin();
+            for (; line.end() != coords; coords ++) {
+                m_diamondMatrix(coords->row, coords->col) = HOLE;
             }
         }
         return true;
@@ -133,21 +133,31 @@ bool Board::swap(const DiamondCoords& d1, const DiamondCoords& d2)
     else {
         m_diamondMatrix(d1.row, d1.col) = diamondValue2;
         m_diamondMatrix(d2.row, d2.col) = diamondValue1;
-        
         if (m_delegate) {
-            //m_delegate->onAnimateSwap(this, DiamondCoords(y1, x1), DiamondCoords(y2, x2));
+            CoordsArray from, to;
+            from.push_back(d1);
+            from.push_back(d2);
+            to.push_back(d2);
+            to.push_back(d1);
+            m_delegate->onDiamondsMoved(this, from, to);
         }
 
         if (findLines(m_diamondMatrix) == 0) {
             m_diamondMatrix(d1.row, d1.col) = diamondValue1;
-            m_diamondMatrix(d2.row, d2.col) = diamondValue2;
+            m_diamondMatrix(d2.row, d2.col) = diamondValue2;            
+
             if (m_delegate) {
-               // m_delegate->onAnimateSwap(this, DiamondCoords(y1, x1), DiamondCoords(y2, x2));
+                m_delegate->onPreviousMoveCancelled(this);
+                
+                CoordsArray from, to;
+                from.push_back(d1);
+                from.push_back(d2);
+                to.push_back(d2);
+                to.push_back(d1);
+                m_delegate->onDiamondsMoved(this, from, to);
             }
             return false;
         } else {
-           
-            
             return true;
         }
     }
