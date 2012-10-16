@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		68CD5DE6162D64CC00699AB9 /* MidasMiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */; };
 		68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED6162B372D00F13811 /* OpenGL.framework */; };
 		68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED8162B374100F13811 /* GLUT.framework */; };
 		68F4FEDE162B6DE800F13811 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDD162B6DE800F13811 /* libpng15.a */; };
@@ -52,6 +53,8 @@
 
 /* Begin PBXFileReference section */
 		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
+		68CD5DE4162D64B800699AB9 /* MidasMiner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidasMiner.h; sourceTree = "<group>"; };
+		68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidasMiner.cpp; sourceTree = "<group>"; };
 		68F4FED6162B372D00F13811 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		68F4FED8162B374100F13811 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		68F4FEDC162B653C00F13811 /* pngLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngLoad.h; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 				68FE0645162C928E007A31AB /* BoardRenderer.cpp */,
 				68FE0647162C92C3007A31AB /* BoardRenderer.h */,
 				68FE064A162CAF43007A31AB /* RandomNumberGenerator.h */,
+				68CD5DE4162D64B800699AB9 /* MidasMiner.h */,
+				68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */,
 			);
 			path = MidasMiner;
 			sourceTree = "<group>";
@@ -313,6 +318,7 @@
 				68FE0642162C91B8007A31AB /* main.cpp in Sources */,
 				68FE0646162C928E007A31AB /* BoardRenderer.cpp in Sources */,
 				68FE064C162CB322007A31AB /* TestRandomNumberGenerator.cpp in Sources */,
+				68CD5DE6162D64CC00699AB9 /* MidasMiner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,32 +373,28 @@
 		68964895162B35F900D719E3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					boost_1_51_0,
-					"UnitTest++/src",
-					/opt/local/include,
-				);
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "UnitTest++/src";
 			};
 			name = Debug;
 		};
 		68964896162B35F900D719E3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = (
-					boost_1_51_0,
-					"UnitTest++/src",
-					/opt/local/include,
-				);
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/opt/local/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "UnitTest++/src";
 			};
 			name = Release;
 		};
