@@ -98,7 +98,11 @@ public:
         swap(DiamondCoords(y1, x1), DiamondCoords(y2, x2));
     }
     
-    enum Animaton { ANIMATION_SWAPPING, ANIMATION_REMOVING, ANIMATION_FALLING };
+    enum Animaton { ANIMATION_SWAPPING, 
+                    // when a swap doesn't create lines, the swap isn't valie
+                    // and the diamonds are automatically swapped back.
+                    ANIMATION_SWAPPING_BACK, 
+                    ANIMATION_REMOVING, ANIMATION_FALLING };
     void onAnimationFinished(Animaton ani);
     
     

@@ -168,34 +168,7 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
 
 void BoardRenderer::setTimer()
 {
-    glutTimerFunc(1000, BoardRenderer::glutTimerHandler, 0);
-}
-
-void BoardRenderer::onDiamondsSwapped(Board* sender, 
-                                      const DiamondCoords& d1, const DiamondCoords& d2)
-{
-    m_hasPickedDiamond = false;
-    
-    assert(m_sprites.empty()); // we're not currently animating anything
-    m_sprites.clear();
-    
-    Sprite s1;
-    s1.diamond = d1;
-    s1.pos = getDiamondPosition(d2);
-    s1.finalPos = getDiamondPosition(d1);
-    s1.velocity = (s1.finalPos - s1.pos) / 10;
-    
-    Sprite s2;
-    s2.diamond = d2;
-    s2.pos = getDiamondPosition(d1);
-    s2.finalPos = getDiamondPosition(d2);
-    s2.velocity = (s2.finalPos - s2.pos) / 10;
-    
-    m_sprites.push_back(s1);
-    m_sprites.push_back(s2);
-    
-    m_currentAnimation = Board::ANIMATION_SWAPPING;
-    setTimer();
+    glutTimerFunc(50, BoardRenderer::glutTimerHandler, 0);
 }
 
 void BoardRenderer::onTimer()
@@ -218,11 +191,43 @@ void BoardRenderer::onTimer()
     } 
 }
 
+void BoardRenderer::onDiamondsSwapped(Board* sender, 
+                                      const DiamondCoords& d1, const DiamondCoords& d2)
+{
+    m_hasPickedDiamond = false;
+    m_currentAnimation = Board::ANIMATION_SWAPPING;
+    setupSwapAnimation(d1, d2);
+}
+
+void BoardRenderer::setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2)
+{
+    assert(m_sprites.empty()); // we're not currently animating anything
+    m_sprites.clear();
+    
+    Sprite s1;
+    s1.diamond = d1;
+    s1.pos = getDiamondPosition(d2);
+    s1.finalPos = getDiamondPosition(d1);
+    s1.velocity = (s1.finalPos - s1.pos) / 10;
+    
+    Sprite s2;
+    s2.diamond = d2;
+    s2.pos = getDiamondPosition(d1);
+    s2.finalPos = getDiamondPosition(d2);
+    s2.velocity = (s2.finalPos - s2.pos) / 10;
+    
+    m_sprites.push_back(s1);
+    m_sprites.push_back(s2);
+    
+  
+    setTimer();
+}
+
 void BoardRenderer::onPreviousSwapCancelled(Board* sender,
                                             const DiamondCoords& d1, const DiamondCoords& d2)
 {
-    glutPostRedisplay();
-    // TODO: animation
+    m_currentAnimation = Board::ANIMATION_SWAPPING_BACK;
+    setupSwapAnimation(d1, d2);
 }
 
 /*

@@ -106,7 +106,9 @@ void Board::onAnimationFinished(Animaton ani)
 {
     if (ANIMATION_SWAPPING == ani) 
         onAnimationSwappingFinished();
-    else if (ANIMATION_REMOVING == ani)
+    else if (ANIMATION_SWAPPING_BACK == ani) {
+        // intentionally left blank
+    } else if (ANIMATION_REMOVING == ani)
         onAnimationRemovingFnished();
     else if (ANIMATION_FALLING == ani)
         onAnimationFallingFinished();

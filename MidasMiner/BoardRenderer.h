@@ -99,6 +99,8 @@ private:
     
     void setTimer();
     void onTimer();
+    
+    void setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2);
 
 //
 // BoardDelegate methods
