@@ -134,6 +134,7 @@ void Board::swap(const DiamondCoords& d1, const DiamondCoords& d2)
     
     if (m_delegate) {
         m_delegate->onDiamondsSwapped(this, d1, d2);
+        // continues in onAnimationSwappingFinished()
     }
 }
 
@@ -161,11 +162,11 @@ void Board::onAnimationSwappingFinished()
 
 
 /* It's not the simplest way to implement the collapse of the board but this design
- makes the implementation of animation easier.
- */
+   makes the implementation of animation easier.
+*/
 void Board::collapse(bool firstIteration)
 {
-    bool holesDetected = false;
+    bool holesFound = false;
     
     // Find lines and replace them with holes
     Lines lines;
@@ -176,14 +177,14 @@ void Board::collapse(bool firstIteration)
             CoordsArray::const_iterator coords = line.begin();
             for (; line.end() != coords; coords ++) {
                 m_diamondMatrix(coords->row, coords->col) = HOLE;
-                holesDetected = true;
+                holesFound = true;
             }
         }
     } else if (hasHole()) { // The unit tests may setup a board with holes
-        holesDetected = true;
+        holesFound = true;
     }
     
-    if (!holesDetected) return;
+    if (!holesFound) return;
     
     if (firstIteration) {
         m_iteration = 0;
@@ -197,7 +198,7 @@ void Board::collapse(bool firstIteration)
     
     if (m_delegate) {
         m_delegate->onDiamondsRemoved(this);
-        // continue in onDiamondsRemovedAnimationFnished
+        // continue in onAnimationRemovingFnished
     }
 }
 
@@ -212,11 +213,12 @@ void Board::moveBoardDownwardOneStep()
     for (unsigned i = 0; i < m_diamondMatrix.columns(); ++ i) {  
         
         if (m_rowsOfLastKnownEmptyDiamond[i] >= 0) {
-            bool emptyDiamondFoundInThisColumn = false;
+            
+            bool holeFound = false;
             for (int j = m_rowsOfLastKnownEmptyDiamond[i]; j >= 0; -- j) {
                 if (m_diamondMatrix(j, i) == HOLE) {
                     m_rowsOfLastKnownEmptyDiamond[i] = j;
-                    emptyDiamondFoundInThisColumn = true;
+                    holeFound = true;
                     moveColumnDownward(j, i);
                     // There may be more holes above but we will handle them in the next iteration 
                     // so that all diamonds drop at the same speed.
@@ -224,7 +226,7 @@ void Board::moveBoardDownwardOneStep()
                 }
             }
             
-            if (!emptyDiamondFoundInThisColumn) m_rowsOfLastKnownEmptyDiamond[i] = -1;
+            if (!holeFound) m_rowsOfLastKnownEmptyDiamond[i] = -1;
         }
     }
     

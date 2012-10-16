@@ -97,7 +97,7 @@ private:
         BoardRenderer::getSingleton()->onTimer();
     }
     
-    void setTimer();
+    void setTimer(unsigned milliseconds = 0);
     void onTimer();
     
     void setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2);
@@ -112,7 +112,7 @@ public:
     virtual void onPreviousSwapCancelled(Board* sender,
                                          const DiamondCoords& d1, const DiamondCoords& d2);
     
-    virtual void onDiamondsRemoved(Board* sender) {}
+    virtual void onDiamondsRemoved(Board* sender);
     
     virtual void onDiamondsFallen(Board* sender, 
                                  const CoordsArray& toCoordsArray, 

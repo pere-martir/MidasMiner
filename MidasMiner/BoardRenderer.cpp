@@ -94,11 +94,14 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     
     for (unsigned int i = 0; i < m_board.columns(); ++ i) {
         for (unsigned int j = 0; j < m_board.rows(); ++ j) {
+            unsigned diamond = m_board(j, i);
+            if (diamond == 0) continue;
+            
+            assert(diamond <= m_diamondTextures.size());
+            
             DiamondCoords corrds = DiamondCoords(j, i);
             
             Vector2D pos = getDiamondPosition(corrds);
-            unsigned diamond = m_board(j, i);
-            assert(diamond <= m_diamondTextures.size());
             glBindTexture(GL_TEXTURE_2D, m_diamondTextures[diamond - 1]);
             
             glBegin(GL_QUADS);
@@ -151,8 +154,6 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
                                     const CoordsArray& toCoordsArray, 
                                     const CoordsArray& fromCoordsArray)
 {
-    assert(false);
-    
     assert(m_sprites.empty()); // we're not currently animating anything
     m_sprites.clear();
     for (unsigned i = 0; i < toCoordsArray.size(); ++ i) {
@@ -166,9 +167,9 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
     glutTimerFunc(100, BoardRenderer::glutTimerHandler, 0);
 }
 
-void BoardRenderer::setTimer()
+void BoardRenderer::setTimer(unsigned milliseconds)
 {
-    glutTimerFunc(50, BoardRenderer::glutTimerHandler, 0);
+    glutTimerFunc(0 != milliseconds ? milliseconds : 50, BoardRenderer::glutTimerHandler, 0);
 }
 
 void BoardRenderer::onTimer()
@@ -199,6 +200,14 @@ void BoardRenderer::onDiamondsSwapped(Board* sender,
     setupSwapAnimation(d1, d2);
 }
 
+
+void BoardRenderer::onPreviousSwapCancelled(Board* sender,
+                                            const DiamondCoords& d1, const DiamondCoords& d2)
+{
+    m_currentAnimation = Board::ANIMATION_SWAPPING_BACK;
+    setupSwapAnimation(d1, d2);
+}
+
 void BoardRenderer::setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2)
 {
     assert(m_sprites.empty()); // we're not currently animating anything
@@ -219,16 +228,18 @@ void BoardRenderer::setupSwapAnimation(const DiamondCoords& d1, const DiamondCoo
     m_sprites.push_back(s1);
     m_sprites.push_back(s2);
     
-  
     setTimer();
 }
 
-void BoardRenderer::onPreviousSwapCancelled(Board* sender,
-                                            const DiamondCoords& d1, const DiamondCoords& d2)
+void BoardRenderer::onDiamondsRemoved(Board* sender)
 {
-    m_currentAnimation = Board::ANIMATION_SWAPPING_BACK;
-    setupSwapAnimation(d1, d2);
+    assert(m_sprites.empty()); // we're not currently animating anything
+    m_sprites.clear();
+    m_currentAnimation = Board::ANIMATION_REMOVING;
+    glutPostRedisplay();
+    setTimer(500);
 }
+
 
 /*
 bool BoardRenderer::doesSprtesContainDiamond(const DiamondCoords& d) const
@@ -240,7 +251,6 @@ bool BoardRenderer::doesSprtesContainDiamond(const DiamondCoords& d) const
     return false;
 }
 */
-
 
 bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 {
