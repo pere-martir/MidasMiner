@@ -106,7 +106,7 @@ public:
                       RandomNumberGenerator& randNumGenerator);
     
     unsigned findLines(Lines* result = NULL) const { return findLines(m_diamondMatrix, result); }
-    unsigned findLines(const Matrix& matrix, Lines* result) const;
+    unsigned findLines(const Matrix& matrix, Lines* result = NULL) const;
     
     bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
     

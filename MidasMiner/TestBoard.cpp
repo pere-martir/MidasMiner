@@ -2,10 +2,10 @@
 #include "Board.h"
 #include "RandomNumberGenerator.h"
 
+#if 1
 SUITE(Initialization)
 {
     
-    /*
 TEST(RandomInitializationDoesNotCreateLines)
 {
     Board board;
@@ -16,7 +16,7 @@ TEST(RandomInitializationDoesNotCreateLines)
     ShortRunRandomNumberGenerator rand;
     board.initRandomly(8, 5, rand);
     CHECK_EQUAL(0, board.findLines());
-}*/
+}
     
 }
 
@@ -154,7 +154,7 @@ TEST(VerticalCrossHorizontal)
 SUITE(Swap)
 {
 
-TEST(TwoHorizontallyAdjacent)
+TEST(SwapMustCreateLines)
 {
     Matrix m;
     m.initWithElements(4, 4, 
@@ -163,22 +163,29 @@ TEST(TwoHorizontallyAdjacent)
                        2, 1, 2, 1,
                        1, 2, 1, 2);
     Board board(m);
-    CHECK(board.swap(0, 0, 0, 1)); // The first two elements in the first row
+    CHECK(!board.swap(0, 0, 0, 1)); // The first two elements in the first row
     
-    Matrix expected;
-    expected.initWithElements(4, 4, 
-                       1, 2, 2, 1,
-                       1, 2, 1, 2,
-                       2, 1, 2, 1,
-                       1, 2, 1, 2);
-    CHECK(board.matrix() == expected);
+    CHECK(board.matrix() == m);
 }
     
-TEST(TwoVerticallyAdjacent)
+TEST(CannotSwapDiamondsOfSameColor)
 {
     Matrix m;
     m.initWithElements(4, 4, 
+                       2, 2, 1, 1,
+                       1, 2, 1, 2,
                        2, 1, 2, 1,
+                       1, 2, 1, 2);
+    Board board(m);
+    CHECK(!board.swap(0, 0, 0, 1)); // The first two elements in the first row
+    CHECK(board.matrix() == m);
+}
+    
+TEST(SwapTwoVerticallyAdjacentDiamonds)
+{
+    Matrix m;
+    m.initWithElements(4, 4, 
+                       2, 1, 1, 2,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
                        1, 2, 1, 2);
@@ -187,28 +194,29 @@ TEST(TwoVerticallyAdjacent)
     
     Matrix expected;
     expected.initWithElements(4, 4, 
-                                    1, 1, 2, 1,
-                                    2, 2, 1, 2,
-                                    2, 1, 2, 1,
-                                    1, 2, 1, 2);
+                       1, 1, 1, 2,
+                       2, 2, 1, 2,
+                       2, 1, 2, 1,
+                       1, 2, 1, 2);
     CHECK(board.matrix() == expected);
 }
     
-TEST(CannotSwapNotAdjancentElements)
+TEST(CannotSwapNotAdjacentDiamonds)
 {
     Matrix m;
     m.initWithElements(4, 4, 
-                       2, 1, 2, 1,
+                       2, 1, 1, 3,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
                        1, 2, 1, 2);
     Board board(m);
-    CHECK(!board.swap(0, 0, 0, 2)); 
-    CHECK(!board.swap(0, 0, 2, 0)); 
-    CHECK(!board.swap(0, 0, 3, 3)); 
+    // Swapping (0, 0) and (2, 1) creates three lines but it's not allowed
+    // because they are not adjacent.
+    CHECK(!board.swap(0, 0, 2, 1)); 
     CHECK(board.matrix() == m);
 }
 }
+
 
 SUITE(Collapse)
 {
@@ -336,4 +344,13 @@ TEST(LinesCreatedByNewDiamondsAreRemoved)
     CHECK(board.matrix() == expected);    
 }
     
+}
+#endif
+
+SUITE(GamePlay)
+{
+TEST(Foo)
+{
+    
+}
 }

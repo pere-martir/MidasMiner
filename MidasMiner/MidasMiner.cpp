@@ -1,7 +1,7 @@
 #include <GLUT/glut.h>
 #include "MidasMiner.h"
 
-void MidasMiner::init(int argc, char** argv)
+void GLUTEventHandler::init(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -11,14 +11,14 @@ void MidasMiner::init(int argc, char** argv)
     m_board.initRandomly(8, 5, m_randNumGenerator);
 }
 
-void MidasMiner::glutDisplayHandler() 
+void GLUTEventHandler::handleDisplay() 
 {
     if (!m_renderer) m_renderer = new BoardRenderer();
     m_renderer->draw(WINDOW_WIDTH, WINDOW_HEIGHT, m_board); 
     glutSwapBuffers();
 }
 
-void MidasMiner::glutKeyboardHandler(unsigned char key, int x, int y)
+void GLUTEventHandler::handleKeyboard(unsigned char key, int x, int y)
 {
     switch (key) {
         case 27:    /* ESC key */
@@ -31,7 +31,7 @@ void MidasMiner::glutKeyboardHandler(unsigned char key, int x, int y)
     }
 }
 
-void MidasMiner::glutMouseHanlder(int button, int state, int x, int y)
+void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
 {
     if (GLUT_LEFT_BUTTON == button && GLUT_UP == state) {
         

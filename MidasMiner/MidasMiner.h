@@ -14,14 +14,15 @@
 #include "BoardRenderer.h"
 #include "RandomNumberGenerator.h"
 
-class MidasMiner
+
+class GLUTEventHandler
 {
 public:
-    MidasMiner() : m_renderer(NULL) {}
+    GLUTEventHandler() : m_renderer(NULL) {}
     void init(int argc, char** argv);
-    void glutKeyboardHandler(unsigned char key, int x, int y);
-    void glutMouseHanlder(int button, int state, int x, int y);
-    void glutDisplayHandler();
+    void handleKeyboard(unsigned char key, int x, int y);
+    void handleMouse(int button, int state, int x, int y);
+    void handleDisplay();
 
     
 private:

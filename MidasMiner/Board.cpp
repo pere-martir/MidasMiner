@@ -126,25 +126,37 @@ bool Board::swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2)
 {
     assert(m_diamondMatrix.isValidCoordinates(y1, x1));
     assert(m_diamondMatrix.isValidCoordinates(y2, x2));
-    if (y1 == y2)
+    if (y1 == y2) {
         if (1 != abs(x1 - x2)) return false;
-    else if (x1 == x2)
+    } else if (x1 == x2) {
         if (1 != abs(y1 - y2)) return false;
-    else
+    } else {
         return false;
+    }
     
     unsigned d1 = m_diamondMatrix(y1, x1);
     unsigned d2 = m_diamondMatrix(y2, x2);
     if (d1 == d2) 
         return false;
     else {
-        m_diamondMatrix(y1, x1) = d2;
-        m_diamondMatrix(y2, x2) = d1;
+        Matrix tmpMatrix = m_diamondMatrix;
+        tmpMatrix(y1, x1) = d2;
+        tmpMatrix(y2, x2) = d1;
+
+        if (findLines(tmpMatrix) == 0)
+            return false;
+        else
+        {
+            m_diamondMatrix = tmpMatrix;
+            return true;
+        }
     }
-        
-    return true;
 }
 
+
+/* It's not the simplest way to implement the collapse of the board but this design
+   makes the implementation of animation easier.
+*/
 void Board::collapse()
 {
     unsigned iteration = 0;
@@ -181,9 +193,9 @@ void Board::collapse()
                                    m_futureMatrix.string().c_str(),
                                    m_diamondMatrix.string().c_str());
                             
-                            // There may be more holes above but we will handle them in the next iteration.
-                            // It makes implementing the animation easier, all rows will drop at the same
-                            // velocity.
+                            // There may be more holes above but we will handle them in the next iteration 
+                            // so that all diamonds drop at the same speed.
+
                             break; 
                         }
                     }
