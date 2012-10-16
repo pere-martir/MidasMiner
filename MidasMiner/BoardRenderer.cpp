@@ -58,8 +58,8 @@ bool BoardRenderer::initTextureFromRawImage(char *image, int width, int height, 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, 
-                 GL_RGB, GL_UNSIGNED_BYTE, image);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, 
+                 GL_RGBA, GL_UNSIGNED_BYTE, image);
     
     return true; 
 }
@@ -81,7 +81,6 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
 {
     setupProjectAndModelViewMatrix(windowWidth, windowHeight);
     
-    //glDisable(GL_BLEND);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
@@ -90,8 +89,6 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     glClear(GL_COLOR_BUFFER_BIT);
     
     glEnable(GL_TEXTURE_2D); 
-    //glDisable(GL_LIGHTING);
-    //glDisable(GL_COLOR_MATERIAL);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     

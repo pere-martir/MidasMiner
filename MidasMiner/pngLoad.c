@@ -105,9 +105,11 @@ int pngLoad(char *file, unsigned int *pwidth,
    *pheight = height;
    
    /* Set up some transforms. */
+#if 0
    if (color_type & PNG_COLOR_MASK_ALPHA) {
       png_set_strip_alpha(png_ptr);
    }
+#endif    
    if (bit_depth > 8) {
       png_set_strip_16(png_ptr);
    }
