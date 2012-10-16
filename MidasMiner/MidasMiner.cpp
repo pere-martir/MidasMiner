@@ -47,11 +47,10 @@ void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
                 m_pickedDiamonds.push_back(picked);
             } 
             if (m_pickedDiamonds.size() == 2) {
-                if (m_board.swap(m_pickedDiamonds[0], m_pickedDiamonds[1])) {
-                    m_board.collapse();
-                }
-                    
+                DiamondCoords d1 = m_pickedDiamonds[0];
+                DiamondCoords d2 = m_pickedDiamonds[1];
                 m_pickedDiamonds.clear();
+                m_board.swap(d1, d2);                    
             }
         }
 

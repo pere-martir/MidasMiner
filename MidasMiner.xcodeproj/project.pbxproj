@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		68CD5DE6162D64CC00699AB9 /* MidasMiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */; };
+		68CD5DE9162DFE1B00699AB9 /* BoardDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */; };
 		68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED6162B372D00F13811 /* OpenGL.framework */; };
 		68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED8162B374100F13811 /* GLUT.framework */; };
 		68F4FEDE162B6DE800F13811 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDD162B6DE800F13811 /* libpng15.a */; };
@@ -56,6 +57,7 @@
 		68CD5DE4162D64B800699AB9 /* MidasMiner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidasMiner.h; sourceTree = "<group>"; };
 		68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidasMiner.cpp; sourceTree = "<group>"; };
 		68CD5DE7162DB67000699AB9 /* BoardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoardDelegate.h; sourceTree = "<group>"; };
+		68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoardDelegate.cpp; sourceTree = "<group>"; };
 		68F4FED6162B372D00F13811 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		68F4FED8162B374100F13811 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		68F4FEDC162B653C00F13811 /* pngLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngLoad.h; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				68CD5DE4162D64B800699AB9 /* MidasMiner.h */,
 				68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */,
 				68CD5DE7162DB67000699AB9 /* BoardDelegate.h */,
+				68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */,
 			);
 			path = MidasMiner;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				68FE0646162C928E007A31AB /* BoardRenderer.cpp in Sources */,
 				68FE064C162CB322007A31AB /* TestRandomNumberGenerator.cpp in Sources */,
 				68CD5DE6162D64CC00699AB9 /* MidasMiner.cpp in Sources */,
+				68CD5DE9162DFE1B00699AB9 /* BoardDelegate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

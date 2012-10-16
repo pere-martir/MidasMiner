@@ -144,11 +144,10 @@ Pixel BoardRenderer::getDiamondPosition(const DiamondCoords& diamond) const
 }
 
 
-void BoardRenderer::onDiamondsMoved(const Board* sender, 
+void BoardRenderer::onDiamondsMoved(Board* sender, 
                                     const CoordsArray& toCoordsArray, 
                                     const CoordsArray& fromCoordsArray)
 {
-    return;
     assert(m_sprites.empty()); // we're not currently animating anything
     m_sprites.clear();
     for (unsigned i = 0; i < toCoordsArray.size(); ++ i) {
@@ -161,6 +160,20 @@ void BoardRenderer::onDiamondsMoved(const Board* sender,
     m_animationFinished = false;
     glutTimerFunc(100, BoardRenderer::glutTimerHandler, 0);
     while (!m_animationFinished);
+}
+
+void BoardRenderer::onDiamondsSwapped(Board* sender, 
+                                      const DiamondCoords& d1, const DiamondCoords& d2)
+{
+    // TODO: animation
+}
+
+void BoardRenderer::onPreviousSwapCancelled(Board* sender,
+                                            const DiamondCoords& d1, const DiamondCoords& d2)
+{
+    m_hasPickedDiamond = false;
+    glutPostRedisplay();
+    // TODO: animation
 }
 
 bool BoardRenderer::doesSprtesContainDiamond(const DiamondCoords& d) const

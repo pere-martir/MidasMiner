@@ -164,7 +164,7 @@ TEST(SwappingMustCreateLines)
                        1, 2, 1, 2);
     Board board(m);
     // Swap the first two elements in the first row
-    CHECK(!board.swap(DiamondCoords(0, 0), DiamondCoords(0, 1))); 
+    board.swap(DiamondCoords(0, 0), DiamondCoords(0, 1)); 
     CHECK(board.matrix() == m);
 }
     
@@ -178,7 +178,7 @@ TEST(CannotSwapDiamondsOfSameColor)
                        1, 2, 1, 2);
     Board board(m);
     // Swap the first two elements in the first row
-    CHECK(!board.swap(DiamondCoords(0, 0), DiamondCoords(0, 1)));
+    board.swap(DiamondCoords(0, 0), DiamondCoords(0, 1));
     CHECK(board.matrix() == m);
 }
     
@@ -191,7 +191,8 @@ TEST(SwapTwoVerticallyAdjacentDiamonds)
                        2, 1, 2, 1,
                        1, 2, 1, 2);
     Board board(m);
-    CHECK(board.swap(0, 0, 1, 0)); // The leading elments of the first two rows.
+    // The leading elments of the first two rows.
+    board.swap(DiamondCoords(0, 0), DiamondCoords(1, 0)); 
     
     Matrix expected;
     expected.initWithElements(4, 4, 
@@ -213,11 +214,11 @@ TEST(CannotSwapNotAdjacentDiamonds)
     Board board(m);
     // Swapping (0, 0) and (2, 1) creates three lines but it's not allowed
     // because they are not adjacent.
-    CHECK(!board.swap(0, 0, 2, 1)); 
+    board.swap(DiamondCoords(0, 0), DiamondCoords(2, 1)); 
     CHECK(board.matrix() == m);
 }
 }
-
+#endif
 
 SUITE(Collapse)
 {
@@ -346,12 +347,6 @@ TEST(LinesCreatedByNewDiamondsAreRemoved)
 }
     
 }
-#endif
 
-SUITE(GamePlay)
-{
-TEST(Foo)
-{
-    
-}
-}
+
+

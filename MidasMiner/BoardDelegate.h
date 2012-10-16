@@ -9,6 +9,9 @@
 #ifndef MidasMiner_BoardDelegate_h
 #define MidasMiner_BoardDelegate_h
 
+#include <stdlib.h>
+#include <vector>
+
 struct DiamondCoords 
 {
     unsigned row, col;
@@ -43,17 +46,40 @@ class BoardDelegate
 public:
     virtual ~BoardDelegate() {}
     
-    virtual void onPreviousMoveCancelled(const Board* sender) {}
+    virtual void onDiamondsSwapped(Board* sender, 
+                                   const DiamondCoords& d1, const DiamondCoords& d2) = 0;
+    
+    virtual void onPreviousSwapCancelled(Board* sender,
+                                         const DiamondCoords& d1, const DiamondCoords& d2) = 0;
+
+    virtual void onDiamondsDisappeared(Board* sender) = 0;
     
     // Notify thes diamonds have been moved. For each diamond, its current coordinates are 
     // stored in 'toCoordsArray', and its previous coordinates in 'fromCoordsArray' of the 
     // same array index. 'toCoordsArray' and 'fromCoordsArray' will always have the same size.
-    virtual void onDiamondsMoved(const Board* sender, 
+    virtual void onDiamondsMoved(Board* sender, 
                                  const CoordsArray& toCoordsArray, 
-                                 const CoordsArray& fromCoordsArray) {}
-    
-    //virtual void onLinesRemoved(const Board* sender) = 0;
+                                 const CoordsArray& fromCoordsArray) = 0;
 };
+
+
+class DefaultBoardDelegate : public BoardDelegate
+{
+public:
+    
+    virtual void onDiamondsSwapped(Board* sender, 
+                                   const DiamondCoords& d1, const DiamondCoords& d2);
+    
+    virtual void onPreviousSwapCancelled(Board* sender,
+                                         const DiamondCoords& d1, const DiamondCoords& d2) {}
+    
+    virtual void onDiamondsDisappeared(Board* sender);
+    
+    virtual void onDiamondsMoved(Board* sender, 
+                                 const CoordsArray& toCoordsArray, 
+                                 const CoordsArray& fromCoordsArray);
+};
+
 
 
 #endif

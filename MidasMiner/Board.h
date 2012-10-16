@@ -72,6 +72,7 @@ public:
 
 class RandomNumberGenerator;
 
+
 class Board
 {
     
@@ -81,40 +82,46 @@ private:
 
     
 public:
-    Board() : m_delegate(NULL) {}
-    Board(const Matrix& m) : m_diamondMatrix(m), m_delegate(NULL) {}
+    Board() : m_delegate(&m_defaultDelegate) {}
+    Board(const Matrix& m) : m_diamondMatrix(m), m_delegate(&m_defaultDelegate) {}
+ 
+    void setDelegate(BoardDelegate* delegate) { m_delegate = delegate; }
     
     void initRandomly(unsigned size, unsigned diamondTypes, 
                       RandomNumberGenerator& randNumGenerator);
     
+    void swap(const DiamondCoords& d1, const DiamondCoords& d2);
+    
+    // Swap the positions of the two elements at (y1, x1) and (y2, x2)
+    // Return false if they cannot be swapped, true otherwise.
+    void swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2) {
+        swap(DiamondCoords(y1, x1), DiamondCoords(y2, x2));
+    }
+    
+    void onDiamondsSwappedAnimationFinished(); 
+    void onDiamondsDisappearedAnimationFnished();
+    void onDiamondsMovedAnimationFinished();
+    
+// These methods are made public only for unit tests
+public:
     unsigned findLines(Lines* result = NULL) const { return findLines(m_diamondMatrix, result); }
     unsigned findLines(const Matrix& matrix, Lines* result = NULL) const;
-    
-    bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
     
     // Move each column independently "downwards" (toward to last row) until all empty diamonds in the 
     // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix.
     // The board keeps collapsing until there is no line.
-    void collapse();
+    void collapse(bool firstIteration = true);
     
-    void setDelegate(BoardDelegate* delegate) { m_delegate = delegate; }
-  
+
 //
-// Matrix functions
+// Getters similiar to Matrix ones. Board doesn't inherit from Matrix because I don't want the 
+// internal matrix to be modified by Matrix's setters.
 //
 public:
    
     unsigned columns() const { return m_diamondMatrix.columns(); }
     unsigned rows() const { return m_diamondMatrix.rows(); }
-    
-    // Swap the positions of the two elements at (y1, x1) and (y2, x2)
-    // Return false if they cannot be swapped, true otherwise.
-    bool swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2) {
-        return swap(DiamondCoords(y1, x1), DiamondCoords(y2, x2));
-    }
-    
-    bool swap(const DiamondCoords& d1, const DiamondCoords& d2);
-    
+
     unsigned operator () (unsigned y, unsigned x) const {
         return m_diamondMatrix(y, x);
     }
@@ -124,6 +131,7 @@ private:
     Matrix m_diamondMatrix;
     
     BoardDelegate* m_delegate;
+    DefaultBoardDelegate m_defaultDelegate;
     
     static unsigned getMaxElement(const Matrix& matrix) {
         unsigned maxElement = 0;
@@ -135,6 +143,8 @@ private:
         return maxElement;
     }
     
+    bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
+    
     bool hasHole() const
     {
         for (unsigned i = 0; i < m_diamondMatrix.elements(); ++ i)
@@ -144,11 +154,19 @@ private:
     
     bool removeLines();
     
+    void moveBoardDownwardOneStep();
     // (row, col) must be a hole.
     void moveColumnDownward(unsigned row, unsigned col);
     void rotateColumnDownward(Matrix& matrix, unsigned col);
     
+    unsigned m_iteration;
     
+    DiamondCoords m_lastSwappedDiamonds[2];
+    
+    // This arrary is indexed by the column, each element is the row index of
+    // the last known empty diamond. The element -1 means this column has no empty
+    // diamond.
+    std::vector<int> m_rowsOfLastKnownEmptyDiamond;
 //
 // Test helper functions
 //

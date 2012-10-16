@@ -76,13 +76,15 @@ private:
 // BoardDelegate methods
 //
 public:
-    virtual void onPreviousMoveCancelled(const Board* sender)
-    {
-        m_hasPickedDiamond = false;
-        glutPostRedisplay();
-    }
+    virtual void onDiamondsSwapped(Board* sender, 
+                                   const DiamondCoords& d1, const DiamondCoords& d2);
     
-    virtual void onDiamondsMoved(const Board* sender, 
+    virtual void onPreviousSwapCancelled(Board* sender,
+                                         const DiamondCoords& d1, const DiamondCoords& d2);
+    
+    virtual void onDiamondsDisappeared(Board* sender) {}
+    
+    virtual void onDiamondsMoved(Board* sender, 
                                  const CoordsArray& toCoordsArray, 
                                  const CoordsArray& fromCoordsArray);
     
