@@ -61,8 +61,8 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
     for (unsigned d = 1; d <= diamondTypes; ++ d) {
         
         // Find horizonal lines
-        for (unsigned i = 0; i < matrix.columns(); ++ i) {
-            for (unsigned j = 0; j < matrix.rows(); ++ j) {
+        for (unsigned j = 0; j < matrix.rows(); ++ j) {
+            for (unsigned i = 0; i < matrix.columns(); ++ i) {
                 Line line;
                 unsigned x = i;
                 unsigned lineLength = 0;
@@ -104,17 +104,21 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
     return linesFound;
 }
 
-void Board::removeLines(const Lines& lines)
+bool Board::removeLines()
 {
-    // No check for 'lines', be careful
-    
-    Lines::const_iterator lineIt = lines.begin();
-    for (; lines.end() != lineIt; ++ lineIt) {
-        const Line& line = *lineIt;
-        Line::const_iterator diamondIt = line.begin();
-        for (; line.end() != diamondIt; diamondIt ++) {
-            m_diamondMatrix(diamondIt->row, diamondIt->col) = EMPTY_DIAMOND;
+    Lines lines;
+    if (findLines(m_diamondMatrix, &lines) > 0) {
+        Lines::const_iterator lineIt = lines.begin();
+        for (; lines.end() != lineIt; ++ lineIt) {
+            const Line& line = *lineIt;
+            Line::const_iterator diamondCoord = line.begin();
+            for (; line.end() != diamondCoord; diamondCoord ++) {
+                m_diamondMatrix(diamondCoord->row, diamondCoord->col) = HOLE;
+            }
         }
+        return true;
+    } else {
+        return false;
     }
 }
 
@@ -143,50 +147,68 @@ bool Board::swap(unsigned y1, unsigned x1, unsigned y2, unsigned x2)
 
 void Board::collapse()
 {
-    // This arrary is indexed by the column, each element is the row index of
-    // the last known empty diamond. The element -1 means this column has no empty
-    // diamond.
-    std::vector<int> rowsOfLastKnownEmptyDiamond;
-    rowsOfLastKnownEmptyDiamond.resize(m_diamondMatrix.columns(), m_diamondMatrix.rows() - 1);
-    
     unsigned iteration = 0;
-    bool finished = false;
-    while (!finished) {
-        for (unsigned i = 0; i < m_diamondMatrix.columns(); ++ i) {  
-            
-            if (rowsOfLastKnownEmptyDiamond[i] > 0) {
-                bool emptyDiamondFound = false;
-                for (int j = rowsOfLastKnownEmptyDiamond[i]; j >= 0; -- j) {
-                    if (m_diamondMatrix(j, i) == EMPTY_DIAMOND) {
-                        rowsOfLastKnownEmptyDiamond[i] = j;
-                        emptyDiamondFound = true;
-                        moveColumnDownward(j, i);
-                        printf("\n#%d collapse (%d,%d):\n%s", iteration, j, i, m_diamondMatrix.string().c_str());
-                        // There may be some EMPTY_DIAMOND above but we move them in the next iteration.
-                        // It makes implementing the animation easier.
-                        break; 
-                    }
-                }
-                
-                if (!emptyDiamondFound) rowsOfLastKnownEmptyDiamond[i] = -1;
-            }
-        }
-        
-        finished = true;
-        for (unsigned c = 0; c < rowsOfLastKnownEmptyDiamond.size(); ++ c) {
-            if (rowsOfLastKnownEmptyDiamond[c] != -1) {
-                finished = false;
+    while (true)
+    {
+        if (!removeLines()) {
+            // The unit tests may setup a board with holes
+            if (!hasHole())
                 break;
-            }
         }
         
-        iteration ++;
+        printf("\n--\nbefore collapse:\n%s\n%s", 
+               m_futureMatrix.string().c_str(),
+               m_diamondMatrix.string().c_str());
+        
+        // This arrary is indexed by the column, each element is the row index of
+        // the last known empty diamond. The element -1 means this column has no empty
+        // diamond.
+        std::vector<int> rowsOfLastKnownEmptyDiamond;
+        rowsOfLastKnownEmptyDiamond.resize(m_diamondMatrix.columns(), m_diamondMatrix.rows() - 1);
+        
+        bool finished = false;
+        while (!finished) {
+            for (unsigned i = 0; i < m_diamondMatrix.columns(); ++ i) {  
+                
+                if (rowsOfLastKnownEmptyDiamond[i] >= 0) {
+                    bool emptyDiamondFound = false;
+                    for (int j = rowsOfLastKnownEmptyDiamond[i]; j >= 0; -- j) {
+                        if (m_diamondMatrix(j, i) == HOLE) {
+                            rowsOfLastKnownEmptyDiamond[i] = j;
+                            emptyDiamondFound = true;
+                            moveColumnDownward(j, i);
+                            printf("\n--\n#%d collapse (%d,%d):\n%s\n%s", iteration, j, i, 
+                                   m_futureMatrix.string().c_str(),
+                                   m_diamondMatrix.string().c_str());
+                            
+                            // There may be more holes above but we will handle them in the next iteration.
+                            // It makes implementing the animation easier, all rows will drop at the same
+                            // velocity.
+                            break; 
+                        }
+                    }
+                    
+                    if (!emptyDiamondFound) rowsOfLastKnownEmptyDiamond[i] = -1;
+                }
+            }
+            
+            finished = true;
+            for (unsigned c = 0; c < rowsOfLastKnownEmptyDiamond.size(); ++ c) {
+                if (rowsOfLastKnownEmptyDiamond[c] != -1) {
+                    finished = false;
+                    break;
+                }
+            }
+            
+            iteration ++;
+        }
     }
 }
 
 void Board::moveColumnDownward(unsigned row, unsigned col)
 {
-    assert(m_diamondMatrix(row, col) == EMPTY_DIAMOND);
+    assert(m_diamondMatrix.columns() == m_futureMatrix.columns());
+    assert(m_diamondMatrix(row, col) == HOLE);
     for (int r = row; r > 0; --r) {
         m_diamondMatrix(r, col) = m_diamondMatrix(r - 1, col);
     }

@@ -97,8 +97,21 @@ TEST(TwoHorizontalLines)
                        3, 3, 3, 3,
                        1, 2, 1, 2);
     Board board(m);
-    CHECK_EQUAL(1, board.findLines());
+    CHECK_EQUAL(2, board.findLines());
 }
+    
+TEST(TwoVerticalLines)
+{    
+    Matrix m;
+    m.initWithElements(4, 4, 
+                       2, 3, 2, 1,
+                       1, 3, 1, 3,
+                       3, 3, 2, 3,
+                       1, 3, 1, 3);
+    Board board(m);
+    CHECK_EQUAL(2, board.findLines());
+}
+    
 
 TEST(OneVerticalLine)
 {    
@@ -152,13 +165,13 @@ TEST(TwoHorizontallyAdjacent)
     Board board(m);
     CHECK(board.swap(0, 0, 0, 1)); // The first two elements in the first row
     
-    Matrix expectedMatrix;
-    expectedMatrix.initWithElements(4, 4, 
+    Matrix expected;
+    expected.initWithElements(4, 4, 
                        1, 2, 2, 1,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
                        1, 2, 1, 2);
-    CHECK(board.matrix() == expectedMatrix);
+    CHECK(board.matrix() == expected);
 }
     
 TEST(TwoVerticallyAdjacent)
@@ -172,13 +185,13 @@ TEST(TwoVerticallyAdjacent)
     Board board(m);
     CHECK(board.swap(0, 0, 1, 0)); // The leading elments of the first two rows.
     
-    Matrix expectedMatrix;
-    expectedMatrix.initWithElements(4, 4, 
+    Matrix expected;
+    expected.initWithElements(4, 4, 
                                     1, 1, 2, 1,
                                     2, 2, 1, 2,
                                     2, 1, 2, 1,
                                     1, 2, 1, 2);
-    CHECK(board.matrix() == expectedMatrix);
+    CHECK(board.matrix() == expected);
 }
     
 TEST(CannotSwapNotAdjancentElements)
@@ -195,48 +208,132 @@ TEST(CannotSwapNotAdjancentElements)
     CHECK(!board.swap(0, 0, 3, 3)); 
     CHECK(board.matrix() == m);
 }
-    
-TEST(Collapse)
+}
+
+SUITE(Collapse)
+{
+
+TEST(FindLinesBeforeCollapse)
 {
     Matrix m;
     m.initWithElements(4, 4,
-                       2, 3, 1, 2,
-                       3, 1, 3, 1,
-                       1, 3, 1, 2,
-                       2, 3, 2, 1);
-    
+                       3, 3, 3, 3,
+                       1, 2, 1, 2,
+                       2, 1, 2, 1,
+                       1, 2, 1, 2);
     Board board(m);
-    CHECK(board.swap(0, 1, 1, 1)); 
-    Lines linesFound;
-    CHECK(2 == board.findLines(&linesFound));
     
-    board.removeLines(linesFound);
-    Matrix expectedMatrixAfterLinesRemoved;
-    expectedMatrixAfterLinesRemoved.initWithElements(4, 4,
-                       2, 1, 1, 2,
-                       0, 0, 0, 1,
+    Matrix future;
+    future.initWithElements(1, 4,  
+                       4, 5, 6, 7);
+    board.setFutureMatrix(future);
+    
+    Matrix expected;
+    expected.initWithElements(4, 4,  
+                       4, 5, 6, 7,
+                       1, 2, 1, 2,
+                       2, 1, 2, 1,
+                       1, 2, 1, 2);
+    board.collapse();
+    CHECK(board.matrix() == expected);
+}
+    
+TEST(HolesInEachColumn)
+{
+    Matrix m;
+    m.initWithElements(4, 4,
+                       2, 1, 2, 1,
+                       0, 0, 0, 2,
+                       2, 1, 2, 1,
+                       1, 2, 1, 2);
+    Board board(m);
+    
+    Matrix future;
+    future.initWithElements(3, 4,  
+                       3, 4, 5, 6,
+                       8, 9, 1, 2,
+                       4, 5, 6, 7);
+    
+    board.setFutureMatrix(future);
+    
+    Matrix expected;
+    expected.initWithElements(4, 4,  
+                       4, 5, 6, 1,
+                       2, 1, 2, 2,
+                       2, 1, 2, 1,
+                       1, 2, 1, 2);
+    board.collapse();
+    CHECK(board.matrix() == expected);
+}
+    
+TEST(TwoSeparatedEmptyDiamondsInSameColumn)
+{
+    Matrix m;
+    m.initWithElements(4, 4, 
+                       1, 0, 0, 0, 
+                       2, 1, 2, 1, 
+                       1, 2, 1, 2,  
+                       0, 0, 0, 1);
+    Board board(m);
+    
+    Matrix future;
+    future.initWithElements(2, 4,  
+                       7, 8, 9, 3,
+                       3, 4, 5, 6);
+    board.setFutureMatrix(future);
+    
+    Matrix expected;
+    expected.initWithElements(4, 4,
+                       3, 8, 9, 6, 
+                       1, 4, 5, 1, 
+                       2, 1, 2, 2, 
+                       1, 2, 1, 1);
+    board.collapse(); 
+    CHECK(board.matrix() == expected);
+}
+    
+TEST(LinesCreatedByNewDiamondsAreRemoved)
+{
+    Matrix m;
+    m.initWithElements(4, 4,
                        1, 0, 1, 2,
-                       2, 0, 2, 1);
-    CHECK(board.matrix() == expectedMatrixAfterLinesRemoved);
-    CHECK(0 == board.findLines());
-    
-
-    Matrix futureMatrix;
-    futureMatrix.initWithElements(3, 4,  
-                       4, 5, 4, 5,
+                       2, 0, 2, 1,
+                       1, 0, 1, 2,
+                       2, 1, 2, 1);
+    Board board(m);
+    Matrix future;
+    future.initWithElements(5, 4, 
+                       6, 7, 6, 7,
+                       7, 6, 7, 6,
+                       4, 1, 4, 5,
                        5, 4, 5, 4,
-                       4, 5, 4, 5);
-    
-    board.setFutureMatrix(futureMatrix);
+                       4, 1, 4, 5);
+    board.setFutureMatrix(future);
+
+    Matrix expected;
+    expected.initWithElements(4, 4,
+                       5, 7, 5, 2,
+                       4, 6, 4, 1,
+                       2, 4, 2, 2,
+                       2, 1, 2, 1);
     board.collapse();
     
-    Matrix expectedMatrixAfterCollapse;
-    expectedMatrixAfterCollapse.initWithElements(4, 4,  
-                       4, 5, 4, 2,
-                       2, 4, 1, 1,
-                       1, 5, 1, 2,
-                       2, 1, 2, 1);
-    CHECK(board.matrix() == expectedMatrixAfterCollapse);
+    // When all holes are filled:
+    //                 1, 1, 1, 2,
+    //                 2, 4, 2, 1,
+    //                 1, 1, 1, 2,
+    //                 2, 1, 2, 1
+    //
+    // the lines of 1 in the first and the third row should be removed:
+    //
+    //                 0, 0, 0, 2,
+    //                 2, 4, 2, 1,
+    //                 0, 0, 0, 2,
+    //                 2, 1, 2, 1
+    //
+    // and then keep collasping the board.
+    //
+    CHECK(board.matrix() == expected);    
 }
-   
+    
 }

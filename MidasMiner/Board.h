@@ -31,7 +31,7 @@ private:
     
 public:
     
-    Matrix(unsigned columns = 0, unsigned rows = 0) : m_columns(columns), m_rows(rows)
+    Matrix(unsigned rows = 0, unsigned columns = 0) : m_columns(columns), m_rows(rows)
     {
         m_data.resize(rows * columns, 0);
     }
@@ -95,7 +95,7 @@ class Board
     
 private:
     typedef unsigned int DiamondIndex;
-    static const unsigned EMPTY_DIAMOND = 0;
+    static const unsigned HOLE = 0;
 
     
 public:
@@ -110,10 +110,9 @@ public:
     
     bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
     
-    void removeLines(const Lines& lines);
-    
     // Move each column independently "downwards" (toward to last row) until all empty diamonds in the 
-    // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix
+    // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix.
+    // The board keeps collapsing until there is no line.
     void collapse();
   
 //
@@ -145,9 +144,20 @@ private:
         assert(maxElement > 0);
         return maxElement;
     }
-    // (row, col) must be an EMPTY_DIAMOND
+    
+    bool hasHole() const
+    {
+        for (unsigned i = 0; i < m_diamondMatrix.elements(); ++ i)
+            if (HOLE == m_diamondMatrix.getElementByIndex(i)) return true;
+        return false;
+    }
+    
+    bool removeLines();
+    
+    // (row, col) must be a hole.
     void moveColumnDownward(unsigned row, unsigned col);
     void rotateColumnDownward(Matrix& matrix, unsigned col);
+    
     
 //
 // Test helper functions
