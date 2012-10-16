@@ -98,9 +98,9 @@ public:
         swap(DiamondCoords(y1, x1), DiamondCoords(y2, x2));
     }
     
-    void onDiamondsSwappedAnimationFinished(); 
-    void onDiamondsDisappearedAnimationFnished();
-    void onDiamondsMovedAnimationFinished();
+    enum Animaton { ANIMATION_SWAPPING, ANIMATION_REMOVING, ANIMATION_FALLING };
+    void onAnimationFinished(Animaton ani);
+    
     
 // These methods are made public only for unit tests
 public:
@@ -167,6 +167,10 @@ private:
     // the last known empty diamond. The element -1 means this column has no empty
     // diamond.
     std::vector<int> m_rowsOfLastKnownEmptyDiamond;
+    
+    void onAnimationSwappingFinished(); 
+    void onAnimationRemovingFnished();
+    void onAnimationFallingFinished();
 //
 // Test helper functions
 //

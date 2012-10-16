@@ -30,7 +30,7 @@ void idle()
 
 int main(int argc, char** argv)
 {
-#if 0
+#if 1
     g_eventHandler.init(argc, argv);
     
     glutDisplayFunc(display);

@@ -16,19 +16,45 @@
 #include "Board.h"
 #include "BoardDelegate.h"
 
-struct Pixel
+struct Vector2D
 {
-    unsigned x, y;
-    Pixel(unsigned _x = 0, unsigned _y = 0) : x(_x), y(_y) {}
+    int x, y;
+    Vector2D(int _x = 0, int _y = 0) : x(_x), y(_y) {}
+    
+    bool operator == (const Vector2D& other) {
+        return x == other.x && y == other.y;
+    }
+    
+    bool operator != (const Vector2D& other) {
+        return !(*this == other);
+    }
+    
+    Vector2D& operator += (const Vector2D& other) {
+        x += other.x;
+        y += other.y;
+        return *this;
+    }
+    
+    // No need to be defined as 'friend' since we don't only
+    // operate with Vector2D.
+    const Vector2D operator - (const Vector2D& other) const {
+        return Vector2D(x - other.x, y - other.y);
+    }
+    
+    const Vector2D operator / (int divisor) const {
+        assert(divisor);
+        return Vector2D(x / divisor,  y / divisor);
+    }
 };
 
 struct Sprite
 {
     DiamondCoords diamond;
-    Pixel pos;
+    Vector2D pos;
+    Vector2D velocity;
+    Vector2D finalPos;
 };
 
-typedef std::vector<Pixel> PixelsArray;
 typedef std::vector<Sprite> SpritesArray;
 
 class BoardRenderer : public BoardDelegate
@@ -55,22 +81,24 @@ private:
     bool initTextureFromRawImage(char *image, int width, int height, GLuint texName);
     
     // Return the upper-left corner
-    Pixel getDiamondPosition(const DiamondCoords& diamond) const;
+    Vector2D getDiamondPosition(const DiamondCoords& diamond) const;
     
     Board& m_board;
     bool m_hasPickedDiamond;
     DiamondCoords m_pickedDiamond;
     
     bool m_animationFinished;
+    Board::Animaton m_currentAnimation;
     SpritesArray m_sprites;
-    bool doesSprtesContainDiamond(const DiamondCoords& d) const;
+    //bool doesSprtesContainDiamond(const DiamondCoords& d) const;
     
     static void glutTimerHandler(int value) 
     {
         BoardRenderer::getSingleton()->onTimer();
     }
     
-    void onTimer() {}
+    void setTimer();
+    void onTimer();
 
 //
 // BoardDelegate methods
@@ -82,9 +110,9 @@ public:
     virtual void onPreviousSwapCancelled(Board* sender,
                                          const DiamondCoords& d1, const DiamondCoords& d2);
     
-    virtual void onDiamondsDisappeared(Board* sender) {}
+    virtual void onDiamondsRemoved(Board* sender) {}
     
-    virtual void onDiamondsMoved(Board* sender, 
+    virtual void onDiamondsFallen(Board* sender, 
                                  const CoordsArray& toCoordsArray, 
                                  const CoordsArray& fromCoordsArray);
     

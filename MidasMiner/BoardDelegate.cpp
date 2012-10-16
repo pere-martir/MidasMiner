@@ -5,18 +5,18 @@
 void DefaultBoardDelegate::onDiamondsSwapped(Board* sender, 
                                              const DiamondCoords& d1, const DiamondCoords& d2)
 {
-    sender->onDiamondsSwappedAnimationFinished();
+    sender->onAnimationFinished(Board::ANIMATION_SWAPPING);
 }
     
-void DefaultBoardDelegate::onDiamondsDisappeared(Board* sender)
+void DefaultBoardDelegate::onDiamondsRemoved(Board* sender)
 {
-    sender->onDiamondsDisappearedAnimationFnished();
+    sender->onAnimationFinished(Board::ANIMATION_REMOVING);
 }
     
-void DefaultBoardDelegate::onDiamondsMoved(Board* sender, 
+void DefaultBoardDelegate::onDiamondsFallen(Board* sender, 
                                  const CoordsArray& toCoordsArray, 
                                  const CoordsArray& fromCoordsArray)
 {
-    sender->onDiamondsMovedAnimationFinished();
+    sender->onAnimationFinished(Board::ANIMATION_FALLING);
 }
 

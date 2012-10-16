@@ -102,6 +102,19 @@ unsigned Board::findLines(const Matrix& matrix, Lines* result) const
 }
 
 
+void Board::onAnimationFinished(Animaton ani)
+{
+    if (ANIMATION_SWAPPING == ani) 
+        onAnimationSwappingFinished();
+    else if (ANIMATION_REMOVING == ani)
+        onAnimationRemovingFnished();
+    else if (ANIMATION_FALLING == ani)
+        onAnimationFallingFinished();
+    else
+        assert(false);
+}
+
+
 void Board::swap(const DiamondCoords& d1, const DiamondCoords& d2)
 {
     assert(m_diamondMatrix.inside(d1.row, d1.col));
@@ -122,7 +135,7 @@ void Board::swap(const DiamondCoords& d1, const DiamondCoords& d2)
     }
 }
 
-void Board::onDiamondsSwappedAnimationFinished() 
+void Board::onAnimationSwappingFinished() 
 {
     if (findLines(m_diamondMatrix) == 0) {
         const DiamondCoords& d1 = m_lastSwappedDiamonds[0];
@@ -181,12 +194,12 @@ void Board::collapse(bool firstIteration)
     }
     
     if (m_delegate) {
-        m_delegate->onDiamondsDisappeared(this);
-        // continue in onDiamondsDisappearedAnimationFnished
+        m_delegate->onDiamondsRemoved(this);
+        // continue in onDiamondsRemovedAnimationFnished
     }
 }
 
-void Board::onDiamondsDisappearedAnimationFnished()
+void Board::onAnimationRemovingFnished()
 {
     moveBoardDownwardOneStep();
 }
@@ -218,12 +231,12 @@ void Board::moveBoardDownwardOneStep()
            m_diamondMatrix.string().c_str());
     
     if (m_delegate) {
-        m_delegate->onDiamondsMoved(this, fromCoordsArray, toCoordsArray); 
-        // continue in onDiamondsMovedAnimationFinished() 
+        m_delegate->onDiamondsFallen(this, fromCoordsArray, toCoordsArray); 
+        // continue in onDiamondsFallenAnimationFinished() 
     }
 }
 
-void Board::onDiamondsMovedAnimationFinished() 
+void Board::onAnimationFallingFinished() 
 {
 #if 0
     bool movingDonwardFinished = true;
