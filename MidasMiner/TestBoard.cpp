@@ -29,7 +29,7 @@ SUITE(FindLines)
 TEST(NoLine) 
 {
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 1, 2, 1,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -38,10 +38,10 @@ TEST(NoLine)
     CHECK_EQUAL(0, board.findLines());
 }
     
-TEST(LineCannotContainZero)
+TEST(ZerosNotConsideredLine)
 {
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        0, 0, 0, 0,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -53,7 +53,7 @@ TEST(LineCannotContainZero)
 TEST(TwoDiamondsAreNotLine)
 {    
     Matrix m;
-    m.initWithElements(4, 
+    m.initWithElements(4, 4,
                        1, 2, 3, 3,
                        2, 1, 2, 1,
                        1, 2, 1, 2,
@@ -65,7 +65,7 @@ TEST(TwoDiamondsAreNotLine)
 TEST(OneHorizontalLineOfThreeDiamonds)
 {    
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 3, 3, 3,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -77,7 +77,7 @@ TEST(OneHorizontalLineOfThreeDiamonds)
 TEST(OneHorizontalLinesOfSixDiamonds)
 {    
     Matrix m;
-    m.initWithElements(6,  
+    m.initWithElements(6, 6, 
                        2, 1, 2, 1, 2, 1,
                        3, 3, 3, 3, 3, 3,
                        2, 1, 2, 1, 2, 1,
@@ -91,7 +91,7 @@ TEST(OneHorizontalLinesOfSixDiamonds)
 TEST(TwoHorizontalLines)
 {    
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 1, 2, 1,
                        1, 3, 3, 3,
                        3, 3, 3, 3,
@@ -103,7 +103,7 @@ TEST(TwoHorizontalLines)
 TEST(OneVerticalLine)
 {    
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 1, 2, 3,
                        1, 2, 1, 3,
                        2, 1, 2, 3,
@@ -115,7 +115,7 @@ TEST(OneVerticalLine)
 TEST(VerticalAndHorizontal)
 {    
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        3, 1, 2, 1,
                        3, 2, 1, 2,
                        3, 1, 2, 1,
@@ -127,7 +127,7 @@ TEST(VerticalAndHorizontal)
 TEST(VerticalCrossHorizontal)
 {    
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 3, 2, 1,
                        1, 3, 1, 2,
                        3, 3, 3, 1,
@@ -144,7 +144,7 @@ SUITE(Swap)
 TEST(TwoHorizontallyAdjacent)
 {
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 1, 2, 1,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -153,7 +153,7 @@ TEST(TwoHorizontallyAdjacent)
     CHECK(board.swap(0, 0, 0, 1)); // The first two elements in the first row
     
     Matrix expectedMatrix;
-    expectedMatrix.initWithElements(4,  
+    expectedMatrix.initWithElements(4, 4, 
                        1, 2, 2, 1,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -164,7 +164,7 @@ TEST(TwoHorizontallyAdjacent)
 TEST(TwoVerticallyAdjacent)
 {
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 1, 2, 1,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -173,7 +173,7 @@ TEST(TwoVerticallyAdjacent)
     CHECK(board.swap(0, 0, 1, 0)); // The leading elments of the first two rows.
     
     Matrix expectedMatrix;
-    expectedMatrix.initWithElements(4,  
+    expectedMatrix.initWithElements(4, 4, 
                                     1, 1, 2, 1,
                                     2, 2, 1, 2,
                                     2, 1, 2, 1,
@@ -184,7 +184,7 @@ TEST(TwoVerticallyAdjacent)
 TEST(CannotSwapNotAdjancentElements)
 {
     Matrix m;
-    m.initWithElements(4,  
+    m.initWithElements(4, 4, 
                        2, 1, 2, 1,
                        1, 2, 1, 2,
                        2, 1, 2, 1,
@@ -196,4 +196,47 @@ TEST(CannotSwapNotAdjancentElements)
     CHECK(board.matrix() == m);
 }
     
+TEST(Collapse)
+{
+    Matrix m;
+    m.initWithElements(4, 4,
+                       2, 3, 1, 2,
+                       3, 1, 3, 1,
+                       1, 3, 1, 2,
+                       2, 3, 2, 1);
+    
+    Board board(m);
+    CHECK(board.swap(0, 1, 1, 1)); 
+    Lines linesFound;
+    CHECK(2 == board.findLines(&linesFound));
+    
+    board.removeLines(linesFound);
+    Matrix expectedMatrixAfterLinesRemoved;
+    expectedMatrixAfterLinesRemoved.initWithElements(4, 4,
+                       2, 1, 1, 2,
+                       0, 0, 0, 1,
+                       1, 0, 1, 2,
+                       2, 0, 2, 1);
+    CHECK(board.matrix() == expectedMatrixAfterLinesRemoved);
+    CHECK(0 == board.findLines());
+    
+
+    Matrix futureMatrix;
+    futureMatrix.initWithElements(3, 4,  
+                       4, 5, 4, 5,
+                       5, 4, 5, 4,
+                       4, 5, 4, 5);
+    
+    board.setFutureMatrix(futureMatrix);
+    board.collapse();
+    
+    Matrix expectedMatrixAfterCollapse;
+    expectedMatrixAfterCollapse.initWithElements(4, 4,  
+                       4, 5, 4, 2,
+                       2, 4, 1, 1,
+                       1, 5, 1, 2,
+                       2, 1, 2, 1);
+    CHECK(board.matrix() == expectedMatrixAfterCollapse);
+}
+   
 }

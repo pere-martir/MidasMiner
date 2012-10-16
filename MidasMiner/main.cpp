@@ -41,7 +41,7 @@ void mouse(int button, int state, int x, int y)
 
 int main(int argc, char** argv)
 {
-#if 1
+#if 0
     g_midasMinder.init(argc, argv);
     glutDisplayFunc(display);
     //glutReshapeFunc(reshape);

@@ -10,6 +10,7 @@
 #define MidasMiner_Board_h
 
 #include <vector>
+#include <string>
 #include <assert.h>
 
 
@@ -35,11 +36,11 @@ public:
         m_data.resize(rows * columns, 0);
     }
     
-    void initWithElements(unsigned columns, ...) {
+    void initWithElements(unsigned rows, unsigned columns, ...) {
         va_list vl;
         va_start(vl, columns);
         m_columns = columns;
-        m_rows = m_columns;
+        m_rows = rows;
         unsigned elements = m_columns * m_rows;
         m_data.clear();
         for (unsigned i = 0; i < elements; ++ i)
@@ -73,8 +74,19 @@ public:
     }
     
     bool operator == (const Matrix& other) const { return m_data == other.m_data; }
+    
+    std::string string() const;
 };
 
+
+struct DiamondCoord 
+{
+    unsigned row, col;
+    DiamondCoord(unsigned r = 0, unsigned c = 0) : row(r), col(c) {}
+};
+
+typedef std::vector<DiamondCoord> Line;
+typedef std::vector<Line> Lines;
 
 class RandomNumberGenerator;
 
@@ -83,23 +95,26 @@ class Board
     
 private:
     typedef unsigned int DiamondIndex;
-    //size_t m_diamondTypes;
+    static const unsigned EMPTY_DIAMOND = 0;
+
     
 public:
     Board(); 
-    Board(const Matrix& m) : m_diamondMatrix(m) 
-    {
-       // m_diamondTypes = getMaxElement(m_diamondMatrix);
-    }
+    Board(const Matrix& m) : m_diamondMatrix(m) {}
     
     void initRandomly(unsigned size, unsigned diamondTypes, 
                       RandomNumberGenerator& randNumGenerator);
     
-    
-    unsigned findLines() const { return findLines(m_diamondMatrix); }
-    unsigned findLines(const Matrix& matrix) const;
+    unsigned findLines(Lines* result = NULL) const { return findLines(m_diamondMatrix, result); }
+    unsigned findLines(const Matrix& matrix, Lines* result) const;
     
     bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
+    
+    void removeLines(const Lines& lines);
+    
+    // Move each column independently "downwards" (toward to last row) until all empty diamonds in the 
+    // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix
+    void collapse();
   
 //
 // Matrix functions
@@ -117,13 +132,6 @@ public:
         return m_diamondMatrix(y, x);
     }
     
-//
-// Test helper functions
-//
-public:
-    void initWithMatrix(const Matrix& m) { m_diamondMatrix = m; }
-    const Matrix& matrix() const { return m_diamondMatrix; }
-    
 private:
     // It contains the index to m_diamondTexture array.
     Matrix m_diamondMatrix;
@@ -137,6 +145,44 @@ private:
         assert(maxElement > 0);
         return maxElement;
     }
+    // (row, col) must be an EMPTY_DIAMOND
+    void moveColumnDownward(unsigned row, unsigned col);
+    void rotateColumnDownward(Matrix& matrix, unsigned col);
+    
+//
+// Test helper functions
+//
+public:
+    void initWithMatrix(const Matrix& m) { m_diamondMatrix = m; }
+    void setFutureMatrix(const Matrix& m) { m_futureMatrix = m; }
+    const Matrix& matrix() const { return m_diamondMatrix; }
+    
+private:
+    // This matrix contains the "future" diamond which will enter the
+    // bord when it coolapse. The last row of Future Matrix enters the 
+    // board first from the top. 
+    //
+    // Imagine that the first row of the borad is right below the last row 
+    // of the future matrix:
+    //
+    //  |  4, 5, 4, 5   -----+
+    //  |  5, 4, 5, 4        +-- Future Matrix
+    //  |  4, 5, 4, 5   -----+
+    //  |  1, 1, 1, 2   --+
+    //  |  0, 0, 0, 1     +-- Board
+    //  |  1, 0, 1, 2     |
+    //  |  2, 0, 2, 1   --+
+    //  V
+    // Collapse direction
+    //
+    // Each column is a rotated list. When the element of the last row is rotated
+    // out, it fill the top row of the board and the future matrix. In the real 
+    // game play, this matrix should contains many rows so that the user
+    // should not notice this psuedo randomness. 
+    //
+    // This design also makes the unit test easier.
+    //
+    Matrix m_futureMatrix;
 };
 
 
