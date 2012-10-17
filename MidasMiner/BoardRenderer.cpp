@@ -4,21 +4,48 @@
 
 BoardRenderer* BoardRenderer::s_singleton = NULL;
 
-BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(false)
+BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_boardPos(335, 110), m_hasPickedDiamond(false)
 {
     assert(NULL == BoardRenderer::s_singleton);
     BoardRenderer::s_singleton = this;
-    
     m_board.setDelegate(this);
+    loadTextures();
+#if USE_PICKING_BY_COLOR_ID
+    initPickingByColorID();
+#endif
+}
+
+void BoardRenderer::loadTextures()
+{
+    //
+    // Background texture
+    //
+    unsigned int width = 0, height = 0;
+    char* imageRawData = NULL;
+    int result = pngLoad(const_cast<char*>("Background.png"), &width, &height, &imageRawData);
+    if (result == 0) {
+        printf("(pngLoad) Background.png FAILED.\n");
+        abort();
+    } 
+    
+    m_backgroundTexture = 0;
+    glGenTextures(1, &m_backgroundTexture);
+    assert(m_backgroundTexture != 0);
+    initTextureFromRawImage(imageRawData, width, height, m_backgroundTexture);
+    m_backgroundWidth = width;
+    m_backgroundHeight = height;
+
+    //
+    // Diamond textures
+    //
     assert(m_diamondTextures.empty());
     
     const char* filenames[] = {"Blue.png", "Green.png", "Purple.png", "Red.png", "Yellow.png" };
     for (unsigned int i = 0; i < sizeof(filenames) / sizeof(filenames[0]); ++ i) {
-        unsigned int width = 0, height = 0;
-        char* imageRawData = NULL;
-        int result = pngLoad(const_cast<char*>(filenames[i]), &width, &height, &imageRawData);
-        if (result == 0)
-        {
+        width = height = 0;
+        imageRawData = NULL;
+        result = pngLoad(const_cast<char*>(filenames[i]), &width, &height, &imageRawData);
+        if (result == 0) {
             printf("(pngLoad) %s FAILED.\n", filenames[i]);
             abort();
         }
@@ -31,10 +58,6 @@ BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(
     }
     
     assert(!m_diamondTextures.empty());
-    
-#if USE_PICKING_BY_COLOR_ID
-    initPickingByColorID();
-#endif
 }
 
 
@@ -72,7 +95,7 @@ void BoardRenderer::setupProjectAndModelViewMatrix(unsigned windowWidth, unsigne
     glLoadIdentity();
     // Displacement trick for exact pixelization
     // http://basic4gl.wikispaces.com/2D+Drawing+in+OpenGL
-    glTranslatef (0.375, 0.375, 0);
+    glTranslatef(0.375, 0.375, 0);    
 }
 
 
@@ -87,8 +110,40 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     
+    drawBackground();
+    glTranslatef(m_boardPos.x, m_boardPos.y, 0);
+    drawDiamonds();
+    drawPickedSquare();
+}
+
+void BoardRenderer::drawBackground()
+{
     glEnable(GL_TEXTURE_2D); 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
+    glBindTexture(GL_TEXTURE_2D, m_backgroundTexture);
+    
+    glBegin(GL_QUADS);
+    
+    glTexCoord2f(0.0f, 1.0f); 
+    glVertex2f(0, 0);
+    
+    glTexCoord2f(1.0f, 1.0f); // upper right
+    glVertex2f(m_backgroundWidth, 0);
+    
+    glTexCoord2f(1.0f, 0.0f); // lower right
+    glVertex2f(m_backgroundWidth, m_backgroundHeight);
+    
+    glTexCoord2f(0.0f, 0.0f); // lower left
+    glVertex2f(0, m_backgroundHeight);
+    
+    glEnd();
+
+}
+
+void BoardRenderer::drawDiamonds()
+{
+    glEnable(GL_TEXTURE_2D); 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
     for (unsigned int i = 0; i < m_board.columns(); ++ i) {
@@ -105,22 +160,25 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
             
             glBegin(GL_QUADS);
             
-            glTexCoord2f (0.0f, 0.0f); // upper left 
+            glTexCoord2f(0.0f, 1.0f); // upper left 
             glVertex2f(pos.x, pos.y);
             
-            glTexCoord2f (1.0f, 0.0f); // upper right
+            glTexCoord2f(1.0f, 1.0f); // upper right
             glVertex2f(pos.x + DIAMOND_SIZE, pos.y);
             
-            glTexCoord2f (1.0f, 1.0f); // lower right
+            glTexCoord2f(1.0f, 0.0f); // lower right
             glVertex2f(pos.x + DIAMOND_SIZE, pos.y + DIAMOND_SIZE);
             
-            glTexCoord2f (0.0f, 1.0f); // lower left
+            glTexCoord2f(0.0f, 0.0f); // lower left
             glVertex2f(pos.x, pos.y + DIAMOND_SIZE);
             
             glEnd();
         }
     }
+}
 
+void BoardRenderer::drawPickedSquare() 
+{
     if (m_hasPickedDiamond) {    
         glDisable(GL_TEXTURE_2D);
         glLineWidth(2);
@@ -274,10 +332,15 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
 bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 {
 #if !defined(USE_PICKING_BY_COLOR_ID)
-    m_hasPickedDiamond = true;
-    coord = DiamondCoords(y / DIAMOND_SIZE, x / DIAMOND_SIZE);
-    m_pickedDiamond = coord;
-    return true;
+    int row = (y - m_boardPos.y) / DIAMOND_SIZE;
+    int col = (x - m_boardPos.x) / DIAMOND_SIZE;
+    if (row >= 0 && row < m_board.rows() && col >= 0 && col < m_board.columns()) {
+        coord = DiamondCoords(row, col);
+        m_pickedDiamond = coord;
+        m_hasPickedDiamond = true;
+    }
+    
+    return m_hasPickedDiamond;
 #else
     //glDrawBuffer(GL_BACK);
     /*glBindTexture(GL_TEXTURE_2D, 0);

@@ -39,20 +39,18 @@ void GLUTEventHandler::init(int argc, char** argv)
      m_board.setFutureMatrix(future);
     
 #endif
-    
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(m_board.size() * BoardRenderer::DIAMOND_SIZE, 
-                       m_board.size() * BoardRenderer::DIAMOND_SIZE);
+    
+    //glutInitWindowSize(m_renderer->backgroundWidth(), m_renderer->backgroundHeight());
+    glutInitWindowSize(755, 600);
     glutCreateWindow("Midas Miner");
+    m_renderer = new BoardRenderer(m_board);
 }
 
 void GLUTEventHandler::handleDisplay() 
 {
-    if (!m_renderer) {
-        m_renderer = new BoardRenderer(m_board);
-    }
-
     m_renderer->draw(m_windowWidth, m_windowHeight); 
     glutSwapBuffers();
 }

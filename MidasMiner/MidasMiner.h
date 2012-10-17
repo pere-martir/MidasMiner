@@ -19,6 +19,8 @@ class GLUTEventHandler
 {
 public:
     GLUTEventHandler() : m_renderer(NULL), m_windowWidth(0), m_windowHeight(0) {}
+    ~GLUTEventHandler() { delete m_renderer; }
+    
     void init(int argc, char** argv);
     void handleKeyboard(unsigned char key, int x, int y);
     void handleMouse(int button, int state, int x, int y);

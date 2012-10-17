@@ -69,19 +69,27 @@ public:
     }
     
     BoardRenderer(Board& board);
-    void draw(unsigned windowWidth, unsigned windowHeight);
     
+    void draw(unsigned windowWidth, unsigned windowHeight);
     bool pickDiamond(unsigned x, unsigned y, DiamondCoords& coord);
+    unsigned backgroundWidth() const { return m_backgroundWidth; }
+    unsigned backgroundHeight() const { return m_backgroundHeight; }
     
 private:
     static BoardRenderer* s_singleton;
     
-    void setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight);
+    unsigned m_backgroundWidth, m_backgroundHeight;
+    GLuint m_backgroundTexture;
     std::vector<GLuint> m_diamondTextures;
-    void loadTexturesFromFiles();
+    void loadTextures();
     bool initTextureFromRawImage(char *image, int width, int height, GLuint texName);
     
-    // Return the upper-left corner
+    void setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight);
+    void drawBackground();
+    void drawDiamonds();
+    void drawPickedSquare();
+    
+    Vector2D m_boardPos;     // The offset of board in BackGround.png
     Vector2D getDiamondCurrentPosition(const DiamondCoords& diamond) const;
     Vector2D mapDiamondCoordinatesToPosition(const DiamondCoords& diamond) const;
     
