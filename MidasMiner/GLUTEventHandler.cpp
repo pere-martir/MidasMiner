@@ -5,7 +5,9 @@ GLUTEventHandler *GLUTEventHandler::s_singleton = NULL;
 
 void GLUTEventHandler::init(int argc, char** argv)
 {
-    m_totalTime = m_remainingTime = 60 * 1000; // one minute, in ms
+    m_totalTime = 60 * 1000; // one minute, in ms
+    m_elapsedTime = 0;
+    m_startClock = clock();
     m_board.initRandomly(8, 5, m_randNumGenerator);
  
     // Small non-random boards. They are only used for testing.
@@ -52,8 +54,7 @@ void GLUTEventHandler::init(int argc, char** argv)
 
 void GLUTEventHandler::handleDisplay() 
 {
-    if (m_remainingTime == m_totalTime) setCountdownTimer();
-    int remainingPercentage = 100 * float(m_remainingTime) / m_totalTime;
+    int remainingPercentage = 100 * float(m_totalTime - m_elapsedTime) / m_totalTime;
     m_renderer->draw(m_windowWidth, m_windowHeight, remainingPercentage); 
     glutSwapBuffers();
 }
@@ -73,7 +74,7 @@ void GLUTEventHandler::handleKeyboard(unsigned char key, int x, int y)
 
 void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
 {
-    if (m_remainingTime == 0) return;
+    if (gameOver()) return;
     
     if (GLUT_LEFT_BUTTON == button && GLUT_UP == state) {
         
@@ -97,9 +98,13 @@ void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
 
 void GLUTEventHandler::countdown()
 {
-    if (m_remainingTime > 0) {
-        m_remainingTime -= COUNTDOWN_TIMER_INTERVAL;
-        if (m_remainingTime < 0) m_remainingTime = 0;
+    if (!gameOver()) {
+        clock_t elapsedClocks = clock() - m_startClock;
+        unsigned elapsedSeconds = float(elapsedClocks) / CLOCKS_PER_SEC;
+        if (elapsedSeconds == 0) elapsedSeconds = 1;
+        m_elapsedTime += elapsedSeconds * 1000;
+        if (m_elapsedTime > m_totalTime) m_elapsedTime = m_totalTime;
+        
         glutPostRedisplay();
         setCountdownTimer();
     }
@@ -107,5 +112,5 @@ void GLUTEventHandler::countdown()
 
 void GLUTEventHandler::setCountdownTimer()
 {
-    glutTimerFunc(100, GLUTEventHandler::glutTimerHandler, COUNTDOWN_TIMER_ID);
+    glutTimerFunc(1000, GLUTEventHandler::glutTimerHandler, COUNTDOWN_TIMER_ID);
 }

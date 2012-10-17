@@ -29,6 +29,8 @@ public:
     void handleMouse(int button, int state, int x, int y);
     void handleDisplay();
     void handleReshape(int width, int height) {
+        if (m_elapsedTime == 0) 
+            setCountdownTimer();
         m_windowWidth = width;
         m_windowHeight = height;
         glViewport(0, 0, width, height);
@@ -57,9 +59,10 @@ private:
      
     void setCountdownTimer();
     void countdown();
-    bool gameOver() { return m_remainingTime <= 0; }
+    bool gameOver() { return m_elapsedTime >= m_totalTime; }
     int m_totalTime; // ms
-    int m_remainingTime; // ms
+    int m_elapsedTime; // ms
+    clock_t m_startClock;
 };
 
 
