@@ -11,6 +11,7 @@
 		681D462F162F08EB00663D06 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDF162B6DFE00F13811 /* libz.a */; };
 		681D4668162F206400663D06 /* BackGround.png in Copy Files */ = {isa = PBXBuildFile; fileRef = 68EBE162162EC7D40089FF03 /* BackGround.png */; };
 		681D466A162F299300663D06 /* GLUTEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 681D4669162F299300663D06 /* GLUTEventHandler.cpp */; };
+		681D466E162F308700663D06 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 681D466D162F308700663D06 /* README */; };
 		68CD5DE9162DFE1B00699AB9 /* BoardDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */; };
 		68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED6162B372D00F13811 /* OpenGL.framework */; };
 		68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED8162B374100F13811 /* GLUT.framework */; };
@@ -58,6 +59,7 @@
 		681D4669162F299300663D06 /* GLUTEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLUTEventHandler.cpp; sourceTree = "<group>"; };
 		681D466B162F29A400663D06 /* GLUTEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLUTEventHandler.h; sourceTree = "<group>"; };
 		681D466C162F2CBB00663D06 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		681D466D162F308700663D06 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
 		68CD5DE7162DB67000699AB9 /* BoardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoardDelegate.h; sourceTree = "<group>"; };
 		68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoardDelegate.cpp; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 				68F4FF5A162C78F600F13811 /* UnitTest++ */,
 				68FE063E162C8D8B007A31AB /* Board.h */,
 				681D466C162F2CBB00663D06 /* Matrix.h */,
+				681D466D162F308700663D06 /* README */,
 				68FE063F162C8DA8007A31AB /* Board.cpp */,
 				68FE0645162C928E007A31AB /* BoardRenderer.cpp */,
 				68FE0647162C92C3007A31AB /* BoardRenderer.h */,
@@ -324,6 +327,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				681D466E162F308700663D06 /* README in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

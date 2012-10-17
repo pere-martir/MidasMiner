@@ -1,0 +1,16 @@
+This program follows the classic MVC (Model-View-Controller) pattern.
+
+* Model: class Board. Some terminologies may have to been understood before reading the code. A "board" is formed by 8x8 "diamond" matrix. The player can swap of any adjacent diamonds. If a swap creates a "line" of three or more adjacent diamonds, they are eliminated and new diamonds enters from the top of the board (this operation is called "collapse"). If a swap doesn't create a line, it's "cancelled". 
+
+The collapse is not difficult to implement, but if the animation is taken into consideration, it's not the case. Each move must be animated and the next move cannot happen until the first one is finished. 
+
+The Model uses 'delegate' pattern to notify the View (BoardRenederer) what's is happening and it's the responsibility of View to notify the Model (or called the "sender", in the term of Delegation Pattern) that an animation has finished.
+
+I want to keep the program portable and only use GLUT functionality so that platform-dependent multithreading API is not considered.
+
+* View: class BoardRenderer. All rendering code of OpenGL happen here. It setups the OpenGL to draw in 2D mode. The game play
+
+* Controller: class GLUTEventHandler. This class handles the keyboard and mouse events. The player uses the mouse to click two diamonds to swap them. Press 'ESC' to leave the program. 
+
+UnitTest++ is a lightweight xUnit-like framework I've used for years. Executing the program with the command line switch '-t' to run unit tests. I don't strip the 'printf' on purpose.
+

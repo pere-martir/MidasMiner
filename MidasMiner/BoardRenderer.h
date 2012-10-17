@@ -71,7 +71,7 @@ public:
     
     BoardRenderer(Board& board);
     
-    void draw(unsigned windowWidth, unsigned windowHeight);
+    void draw(unsigned windowWidth, unsigned windowHeight, unsigned remainingTime);
     bool pickDiamond(unsigned x, unsigned y, DiamondCoords& coord);
     unsigned backgroundWidth() const { return m_backgroundWidth; }
     unsigned backgroundHeight() const { return m_backgroundHeight; }
@@ -98,7 +98,7 @@ private:
     void drawDiamonds();
     void drawCrossOnRecentlyRemovedDiamonds();
     void drawPickedSquare();
-    void drawTimeBar();
+    void drawTimeBar(unsigned remainingTimePercentage);
     void drawGameOver();
     
     Vector2D getDiamondCurrentPosition(const DiamondCoords& diamond) const;
@@ -116,16 +116,14 @@ private:
     CoordsArray m_recentlyRemovedDiamonds;
     
     static const unsigned ANIMATION_TIMER_ID = 0;
-    static const unsigned COUNTDOWN_TIMER_ID = 1;
     static const unsigned ANIMATION_TIMER_INTERVAL = 50; // ms
-    static const unsigned COUNTDOWN_TIMER_INTERVAL = 100; // ms
     
     static void glutTimerHandler(int value) 
     {
         if (ANIMATION_TIMER_ID == value)
             BoardRenderer::getSingleton()->animateSprites();
-        else if (COUNTDOWN_TIMER_ID == value)
-            BoardRenderer::getSingleton()->countdown();
+        else
+            assert(false);
     }
     
     void setAnimationTimer(unsigned milliseconds = 0);
@@ -134,12 +132,6 @@ private:
     bool anyAnimationInProgress() const { 
         return !m_sprites.empty() || !m_recentlyRemovedDiamonds.empty(); 
     }
-    
-    void setCountdownTimer();
-    void countdown();
-    bool gameOver() { return m_remainingTime <= 0; }
-    int m_totalTime; // ms
-    int m_remainingTime; // ms
 
 //
 // BoardDelegate methods

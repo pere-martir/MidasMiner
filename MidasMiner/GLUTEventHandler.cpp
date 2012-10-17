@@ -1,6 +1,8 @@
 #include <GLUT/glut.h>
 #include "GLUTEventHandler.h"
 
+GLUTEventHandler *GLUTEventHandler::s_singleton = NULL;
+
 void GLUTEventHandler::init(int argc, char** argv)
 {
     m_board.initRandomly(8, 5, m_randNumGenerator);
@@ -50,7 +52,9 @@ void GLUTEventHandler::init(int argc, char** argv)
 
 void GLUTEventHandler::handleDisplay() 
 {
-    m_renderer->draw(m_windowWidth, m_windowHeight); 
+    if (m_remainingTime == m_totalTime) setCountdownTimer();
+    int remainingPercentage = 100 * float(m_remainingTime) / m_totalTime;
+    m_renderer->draw(m_windowWidth, m_windowHeight, remainingPercentage); 
     glutSwapBuffers();
 }
 
@@ -69,9 +73,10 @@ void GLUTEventHandler::handleKeyboard(unsigned char key, int x, int y)
 
 void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
 {
+    if (m_remainingTime == 0) return;
+    
     if (GLUT_LEFT_BUTTON == button && GLUT_UP == state) {
         
-        // refactoring to a controller
         DiamondCoords picked;
         if (m_renderer->pickDiamond(x, y, picked)) {
             glutPostRedisplay();
@@ -87,4 +92,20 @@ void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
             }
         }
     }
+}
+
+
+void GLUTEventHandler::countdown()
+{
+    if (m_remainingTime > 0) {
+        m_remainingTime -= COUNTDOWN_TIMER_INTERVAL;
+        if (m_remainingTime < 0) m_remainingTime = 0;
+        glutPostRedisplay();
+        setCountdownTimer();
+    }
+}
+
+void GLUTEventHandler::setCountdownTimer()
+{
+    glutTimerFunc(100, GLUTEventHandler::glutTimerHandler, COUNTDOWN_TIMER_ID);
 }

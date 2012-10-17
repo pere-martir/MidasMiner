@@ -9,8 +9,7 @@ BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_boardPos(335, 110
     assert(NULL == BoardRenderer::s_singleton);
     BoardRenderer::s_singleton = this;
     m_board.setDelegate(this);
-    
-    m_totalTime = m_remainingTime = 60 * 1000; // one minute, in ms
+
     
     loadTextures();
 #if USE_PICKING_BY_COLOR_ID
@@ -92,7 +91,7 @@ bool BoardRenderer::initTextureFromRawImage(char *image, int width, int height, 
 // There is no need to use complicated OpenGL color-ID picking.
 bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 {
-    if (anyAnimationInProgress() || gameOver()) return false; 
+    if (anyAnimationInProgress()) return false; 
     
     int row = (y - m_boardPos.y) / DIAMOND_SIZE;
     int col = (x - m_boardPos.x) / DIAMOND_SIZE;
@@ -129,10 +128,9 @@ void BoardRenderer::setupProjectAndModelViewMatrix(unsigned windowWidth,
 }
 
 
-void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
+void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight,
+                         unsigned remainingTimePercentage)
 {
-    if (m_totalTime == m_remainingTime) setCountdownTimer();
-    
     setupProjectAndModelViewMatrix(windowWidth, windowHeight);
     
     glDisable(GL_DEPTH_TEST);
@@ -141,11 +139,11 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
     drawBackground();
-    drawTimeBar();
+    drawTimeBar(remainingTimePercentage);
     glTranslatef(m_boardPos.x, m_boardPos.y, 0);
     drawDiamonds();
     
-    if (!gameOver()) {
+    if (0 < remainingTimePercentage) {
         drawCrossOnRecentlyRemovedDiamonds();
         drawPickedSquare();
     } else {
@@ -177,7 +175,7 @@ void BoardRenderer::drawBackground()
     glEnd();
 }
 
-void BoardRenderer::drawTimeBar()
+void BoardRenderer::drawTimeBar(unsigned remainingTimePercentage)
 {
     glDisable(GL_BLEND);
     const unsigned LEFT = 50;
@@ -185,7 +183,7 @@ void BoardRenderer::drawTimeBar()
     const unsigned MAX_WIDTH = 130;
     const unsigned HEIGHT = 10;
     const unsigned VERTICAL_CENTER = HEIGHT / 2;
-    unsigned width = MAX_WIDTH * (float(m_remainingTime) / m_totalTime);
+    unsigned width = MAX_WIDTH * float(remainingTimePercentage) / 100;
     glPushMatrix();
     glTranslatef(LEFT, TOP, 0);
     
@@ -377,20 +375,6 @@ Vector2D BoardRenderer::getDiamondCurrentPosition(const DiamondCoords& diamond) 
     return getDiamondFixedPosition(diamond);
 }
 
-void BoardRenderer::countdown()
-{
-    if (m_remainingTime > 0) {
-        m_remainingTime -= COUNTDOWN_TIMER_INTERVAL;
-        if (m_remainingTime < 0) m_remainingTime = 0;
-        glutPostRedisplay();
-        setCountdownTimer();
-    }
-}
-
-void BoardRenderer::setCountdownTimer()
-{
-    glutTimerFunc(100, BoardRenderer::glutTimerHandler, COUNTDOWN_TIMER_ID);
-}
 
 void BoardRenderer::setAnimationTimer(unsigned milliseconds)
 {

@@ -33,10 +33,6 @@ void mouse(int button, int state, int x, int y)
     g_eventHandler.handleMouse(button, state, x, y);
 }
 
-void idle()
-{
-    g_eventHandler.handleIdle();
-}
 
 int main(int argc, char** argv)
 {
@@ -46,7 +42,6 @@ int main(int argc, char** argv)
         glutReshapeFunc(reshape);
         glutKeyboardFunc(keyboard);
         glutMouseFunc(mouse);
-        glutIdleFunc(idle);
         glutMainLoop();
     } else if (argc == 2 && 0 == strcmp(argv[1], "-t")) {
         UnitTest::RunAllTests();
