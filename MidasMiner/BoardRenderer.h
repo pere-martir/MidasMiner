@@ -89,6 +89,7 @@ private:
     void drawDiamonds();
     void drawCrossOnRecentlyRemovedDiamonds();
     void drawPickedSquare();
+    void drawTimeBar();
     
     Vector2D m_boardPos;     // The offset of board in BackGround.png
     Vector2D getDiamondCurrentPosition(const DiamondCoords& diamond) const;
@@ -103,17 +104,30 @@ private:
     DiamondCoords m_pickedDiamond;
     CoordsArray m_recentlyRemovedDiamonds;
     
+    static const unsigned ANIMATION_TIMER_ID = 0;
+    static const unsigned COUNTDOWN_TIMER_ID = 1;
+    static const unsigned ANIMATION_TIMER_INTERVAL = 50; // ms
+    static const unsigned COUNTDOWN_TIMER_INTERVAL = 100; // ms
+    
     static void glutTimerHandler(int value) 
     {
-        BoardRenderer::getSingleton()->animateSprites();
+        if (ANIMATION_TIMER_ID == value)
+            BoardRenderer::getSingleton()->animateSprites();
+        else if (COUNTDOWN_TIMER_ID == value)
+            BoardRenderer::getSingleton()->countdown();
     }
     
-    void setTimer(unsigned milliseconds = 0);
+    void setAnimationTimer(unsigned milliseconds = 0);
     void animateSprites();
     void setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2);
     bool anyAnimationInProgress() const { 
         return !m_sprites.empty() || !m_recentlyRemovedDiamonds.empty(); 
     }
+    
+    void setCountdownTimer();
+    void countdown();
+    int m_totalTime; // ms
+    int m_remainingTime; // ms
 
 //
 // BoardDelegate methods
