@@ -63,6 +63,7 @@ public:
 };
 
 
+// This is only used for unit tests.
 class DefaultBoardDelegate : public BoardDelegate
 {
 public:

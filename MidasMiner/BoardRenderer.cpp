@@ -76,9 +76,6 @@ bool BoardRenderer::initTextureFromRawImage(char *image, int width, int height, 
     
     printf("(loadTexture) width: %d height: %d\n", width, height); 
     
-    /* create a new texture object
-     * and bind it to texname (unsigned integer > 0)
-     */
     glBindTexture(GL_TEXTURE_2D, texName);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -90,6 +87,22 @@ bool BoardRenderer::initTextureFromRawImage(char *image, int width, int height, 
                  GL_RGBA, GL_UNSIGNED_BYTE, image);
     
     return true; 
+}
+
+// There is no need to use complicated OpenGL color-ID picking.
+bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
+{
+    if (anyAnimationInProgress() || gameOver()) return false; 
+    
+    int row = (y - m_boardPos.y) / DIAMOND_SIZE;
+    int col = (x - m_boardPos.x) / DIAMOND_SIZE;
+    if (row >= 0 && row < m_board.rows() && col >= 0 && col < m_board.columns()) {
+        coord = DiamondCoords(row, col);
+        m_pickedDiamond = coord;
+        m_hasPickedDiamond = true;
+    }
+    
+    return m_hasPickedDiamond;
 }
 
 // Setup the origin at the upper-left corner if originAtLeftUpperCorner = true (default)
@@ -435,6 +448,7 @@ void BoardRenderer::animateSprites()
 void BoardRenderer::onDiamondsSwapped(Board* sender, 
                                       const DiamondCoords& d1, const DiamondCoords& d2)
 {
+    assert(!anyAnimationInProgress());
     m_currentAnimation = Board::ANIMATION_SWAPPING;
     setupSwapAnimation(d1, d2);
 }
@@ -443,13 +457,14 @@ void BoardRenderer::onDiamondsSwapped(Board* sender,
 void BoardRenderer::onPreviousSwapCancelled(Board* sender,
                                             const DiamondCoords& d1, const DiamondCoords& d2)
 {
+    assert(!anyAnimationInProgress());
     m_currentAnimation = Board::ANIMATION_SWAPPING_BACK;
     setupSwapAnimation(d1, d2);
 }
 
 void BoardRenderer::setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2)
 {
-    assert(m_sprites.empty()); // we're not currently animating anything
+    assert(!anyAnimationInProgress());
     m_sprites.clear();
     
     Sprite s1;
@@ -472,7 +487,8 @@ void BoardRenderer::setupSwapAnimation(const DiamondCoords& d1, const DiamondCoo
 
 void BoardRenderer::onDiamondsRemoved(Board* sender, const CoordsArray& removedDiamonds)
 {
-    assert(m_sprites.empty()); // we're not currently animating anything
+    assert(!anyAnimationInProgress());
+    
     m_sprites.clear();
     m_currentAnimation = Board::ANIMATION_REMOVING;
     glutPostRedisplay();
@@ -485,7 +501,7 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
                                      const CoordsArray& fromCoordsArray, 
                                      const CoordsArray& toCoordsArray)
 {
-    assert(m_sprites.empty()); // we're not currently animating anything
+    assert(!anyAnimationInProgress());
     m_sprites.clear();
     
     for (unsigned i = 0; i < toCoordsArray.size(); ++ i) {
@@ -499,112 +515,3 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
     m_currentAnimation = Board::ANIMATION_FALLING;
     setAnimationTimer();
 }
-
-bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
-{
-    if (anyAnimationInProgress() || gameOver()) return false; 
-    
-#if !defined(USE_PICKING_BY_COLOR_ID)  
-    int row = (y - m_boardPos.y) / DIAMOND_SIZE;
-    int col = (x - m_boardPos.x) / DIAMOND_SIZE;
-    if (row >= 0 && row < m_board.rows() && col >= 0 && col < m_board.columns()) {
-        coord = DiamondCoords(row, col);
-        m_pickedDiamond = coord;
-        m_hasPickedDiamond = true;
-    }
-    
-    return m_hasPickedDiamond;
-#else
-    //glDrawBuffer(GL_BACK);
-    /*glBindTexture(GL_TEXTURE_2D, 0);
-     glEnable(GL_TEXTURE_2D);
-     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
-     */
-    setupProjectAndModelViewMatrix();
-    renderer->drawInPickingMode(*board);   
-    //glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    
-    GLubyte pixel[4];
-    //glReadBuffer(GL_BACK);
-    
-    //glReadBuffer(GL_COLOR_ATTACHMENT0);
-    
-    glReadBuffer(GL_BACK);
-    
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(x, viewport[3] - y, 1, 1,
-                 GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixel);
-    GLenum error = glGetError();
-    //if (error != GL_NO_ERROR)
-    //    assert(false && "opengl error");
-    printf("\npicked (%d,%d)", pixel[0], pixel[1]);
-    
-    // draw();
-    //glutPostRedisplay();
-    
-    //glReadBuffer(GL_NONE);
-    //glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-#endif
-}
-
-//
-// This is not used
-//
-#if USE_PICKING_BY_COLOR_ID
-void BoardRenderer::initPickingByColorID()
-{
-    glGenFramebuffers(1, &fbo); 
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    // Create the texture object for the primitive information buffer
-    glGenTextures(1, &pickingTexture);
-    glBindTexture(GL_TEXTURE_2D, pickingTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWindowWidth, kWindowHeight,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 
-                           pickingTexture, 0); 
-    
-    // Verify that the FBO is correct
-    GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    
-    if (Status != GL_FRAMEBUFFER_COMPLETE) {
-        printf("FB error, status: 0x%x\n", Status);
-        abort();
-    }
-    
-    // Restore the default framebuffer
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void BoardRenderer::drawInPickingMode(const Board& board)
-{
-    setupProjectAndModelViewMatrix();
-    
-    glDisable(GL_TEXTURE_2D); 
-    //glDisable(GL_DITHER);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    const unsigned int DIAMOND_SIZE = 40; // FIXME
-    for (unsigned int i = 0; i < board.columns(); ++ i) {
-        for (unsigned int j = 0; j < board.rows(); ++ j) {
-            unsigned int left = i * DIAMOND_SIZE, top = j * DIAMOND_SIZE;
-            glBegin(GL_QUADS);
-            glColor4ub(j, i, 0, 0);
-            //glColor4ub(100, 100, 0, 0);
-            glVertex2f(left, top);
-            glVertex2f(left + DIAMOND_SIZE, top);
-            glVertex2f(left + DIAMOND_SIZE, top + DIAMOND_SIZE);
-            glVertex2f(left, top + DIAMOND_SIZE);
-            glEnd();
-        }
-    }
-    //glEnable(GL_DITHER);
-    glEnable(GL_TEXTURE_2D); 
-}
-#endif

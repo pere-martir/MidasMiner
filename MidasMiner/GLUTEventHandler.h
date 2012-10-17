@@ -1,13 +1,5 @@
-//
-//  MidasMiner.h
-//  MidasMiner
-//
-//  Created by Tzu-Chien Chiu on 10/16/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
-
-#ifndef MidasMiner_MidasMiner_h
-#define MidasMiner_MidasMiner_h
+#ifndef MidasMiner_GLUTEventHandler_h
+#define MidasMiner_GLUTEventHandler_h
 
 
 #include "Board.h"
@@ -36,8 +28,6 @@ public:
 private:
     unsigned m_windowWidth, m_windowHeight;
     Board m_board;
-    // Delay its creation until the first draw so that we don't have to 
-    // load the textures when running the unit tests.
     BoardRenderer *m_renderer; 
     StandardLibaryRandomNumberGenerator m_randNumGenerator;
     

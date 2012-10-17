@@ -1,12 +1,11 @@
 #include <GLUT/glut.h>
-#include "MidasMiner.h"
+#include "GLUTEventHandler.h"
 
 void GLUTEventHandler::init(int argc, char** argv)
 {
-#if 1
     m_board.initRandomly(8, 5, m_randNumGenerator);
-#endif
-    
+ 
+    // Small non-random boards. They are only used for testing.
 #if 0
     // Eliminate a horizonal line
     Matrix m;
@@ -18,7 +17,7 @@ void GLUTEventHandler::init(int argc, char** argv)
     m_board.initWithMatrix(m);
     Matrix future;
     future.initWithElements(1, 4, 
-                       3, 4, 5, 1);
+                            3, 4, 5, 1);
     m_board.setFutureMatrix(future);
 #endif
     
@@ -30,20 +29,20 @@ void GLUTEventHandler::init(int argc, char** argv)
                        1, 2, 3, 2, 
                        2, 1, 3, 1,
                        1, 3, 1, 2);
-     m_board.initWithMatrix(m);
-     Matrix future;
-     future.initWithElements(3, 4, 
-                             1, 2, 5, 1,
-                             2, 1, 4, 2,
-                             1, 2, 4, 1);
-     m_board.setFutureMatrix(future);
+    m_board.initWithMatrix(m);
+    Matrix future;
+    future.initWithElements(3, 4, 
+                            1, 2, 5, 1,
+                            2, 1, 4, 2,
+                            1, 2, 4, 1);
+    m_board.setFutureMatrix(future);
     
 #endif
-
+    
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL);
-    
-    //glutInitWindowSize(m_renderer->backgroundWidth(), m_renderer->backgroundHeight());
+    // Initialize the window to be the same size of BackGround.png.
+    // FIXME: read the size from BoardRenderer.
     glutInitWindowSize(755, 600);
     glutCreateWindow("Midas Miner");
     m_renderer = new BoardRenderer(m_board);
@@ -58,8 +57,8 @@ void GLUTEventHandler::handleDisplay()
 void GLUTEventHandler::handleKeyboard(unsigned char key, int x, int y)
 {
     switch (key) {
-        case 27:    /* ESC key */
-        case 'Q':   /* Q|q keys */
+        case 27: /* ESC key */
+        case 'Q':
         case 'q':
             exit(0);
             break;
@@ -87,6 +86,5 @@ void GLUTEventHandler::handleMouse(int button, int state, int x, int y)
                 m_board.swap(d1, d2);                    
             }
         }
-
     }
 }

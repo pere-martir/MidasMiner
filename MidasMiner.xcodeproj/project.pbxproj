@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		68CD5DE6162D64CC00699AB9 /* MidasMiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */; };
+		681D462E162F08EB00663D06 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDD162B6DE800F13811 /* libpng15.a */; };
+		681D462F162F08EB00663D06 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDF162B6DFE00F13811 /* libz.a */; };
+		681D4668162F206400663D06 /* BackGround.png in Copy Files */ = {isa = PBXBuildFile; fileRef = 68EBE162162EC7D40089FF03 /* BackGround.png */; };
+		681D466A162F299300663D06 /* GLUTEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 681D4669162F299300663D06 /* GLUTEventHandler.cpp */; };
 		68CD5DE9162DFE1B00699AB9 /* BoardDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */; };
 		68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED6162B372D00F13811 /* OpenGL.framework */; };
 		68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FED8162B374100F13811 /* GLUT.framework */; };
-		68F4FEDE162B6DE800F13811 /* libpng15.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDD162B6DE800F13811 /* libpng15.a */; };
-		68F4FEE0162B6DFE00F13811 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68F4FEDF162B6DFE00F13811 /* libz.a */; };
 		68F4FEE2162B6EA600F13811 /* pngLoad.c in Sources */ = {isa = PBXBuildFile; fileRef = 68F4FEE1162B6EA600F13811 /* pngLoad.c */; };
 		68F4FF9E162C78F600F13811 /* AssertException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F4FF5B162C78F600F13811 /* AssertException.cpp */; };
 		68F4FF9F162C78F600F13811 /* Checks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68F4FF5E162C78F600F13811 /* Checks.cpp */; };
@@ -43,9 +44,10 @@
 		68964888162B35F900D719E3 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			dstPath = usr/share/man/man1;
+			dstSubfolderSpec = 16;
 			files = (
+				681D4668162F206400663D06 /* BackGround.png in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -53,9 +55,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		681D4669162F299300663D06 /* GLUTEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLUTEventHandler.cpp; sourceTree = "<group>"; };
+		681D466B162F29A400663D06 /* GLUTEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLUTEventHandler.h; sourceTree = "<group>"; };
+		681D466C162F2CBB00663D06 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
 		6896488A162B35F900D719E3 /* MidasMiner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MidasMiner; sourceTree = BUILT_PRODUCTS_DIR; };
-		68CD5DE4162D64B800699AB9 /* MidasMiner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidasMiner.h; sourceTree = "<group>"; };
-		68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidasMiner.cpp; sourceTree = "<group>"; };
 		68CD5DE7162DB67000699AB9 /* BoardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoardDelegate.h; sourceTree = "<group>"; };
 		68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoardDelegate.cpp; sourceTree = "<group>"; };
 		68EBE162162EC7D40089FF03 /* BackGround.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackGround.png; sourceTree = "<group>"; };
@@ -128,8 +131,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				68F4FEE0162B6DFE00F13811 /* libz.a in Frameworks */,
-				68F4FEDE162B6DE800F13811 /* libpng15.a in Frameworks */,
+				681D462E162F08EB00663D06 /* libpng15.a in Frameworks */,
+				681D462F162F08EB00663D06 /* libz.a in Frameworks */,
 				68F4FED9162B374100F13811 /* GLUT.framework in Frameworks */,
 				68F4FED7162B372D00F13811 /* OpenGL.framework in Frameworks */,
 			);
@@ -167,12 +170,13 @@
 				68FE0641162C91B8007A31AB /* main.cpp */,
 				68F4FF5A162C78F600F13811 /* UnitTest++ */,
 				68FE063E162C8D8B007A31AB /* Board.h */,
+				681D466C162F2CBB00663D06 /* Matrix.h */,
 				68FE063F162C8DA8007A31AB /* Board.cpp */,
 				68FE0645162C928E007A31AB /* BoardRenderer.cpp */,
 				68FE0647162C92C3007A31AB /* BoardRenderer.h */,
 				68FE064A162CAF43007A31AB /* RandomNumberGenerator.h */,
-				68CD5DE4162D64B800699AB9 /* MidasMiner.h */,
-				68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */,
+				681D466B162F29A400663D06 /* GLUTEventHandler.h */,
+				681D4669162F299300663D06 /* GLUTEventHandler.cpp */,
 				68CD5DE7162DB67000699AB9 /* BoardDelegate.h */,
 				68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */,
 			);
@@ -279,6 +283,7 @@
 				68964886162B35F900D719E3 /* Sources */,
 				68964887162B35F900D719E3 /* Frameworks */,
 				68964888162B35F900D719E3 /* Copy Files */,
+				681D4660162F1FD900663D06 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -314,6 +319,16 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		681D4660162F1FD900663D06 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		68964886162B35F900D719E3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -343,8 +358,8 @@
 				68FE0642162C91B8007A31AB /* main.cpp in Sources */,
 				68FE0646162C928E007A31AB /* BoardRenderer.cpp in Sources */,
 				68FE064C162CB322007A31AB /* TestRandomNumberGenerator.cpp in Sources */,
-				68CD5DE6162D64CC00699AB9 /* MidasMiner.cpp in Sources */,
 				68CD5DE9162DFE1B00699AB9 /* BoardDelegate.cpp in Sources */,
+				681D466A162F299300663D06 /* GLUTEventHandler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -47,12 +47,13 @@ struct Vector2D
     }
 };
 
+
 struct Sprite
 {
     DiamondCoords diamond; // the final coordinates
     Vector2D pos; // the current position
-    Vector2D velocity; // velocity is added periodically to pos until pos reaches finalPos
     Vector2D finalPos;
+    Vector2D velocity; // velocity is added periodically to pos until pos reaches finalPos
 };
 
 typedef std::vector<Sprite> SpritesArray;
@@ -60,7 +61,7 @@ typedef std::vector<Sprite> SpritesArray;
 class BoardRenderer : public BoardDelegate
 {
 public:
-    static const unsigned int DIAMOND_SIZE = 40; // FIXME
+    static const unsigned int DIAMOND_SIZE = 40;
     
     static BoardRenderer* getSingleton() 
     { 
@@ -75,13 +76,19 @@ public:
     unsigned backgroundWidth() const { return m_backgroundWidth; }
     unsigned backgroundHeight() const { return m_backgroundHeight; }
     
+//
+// Drawing
+//
 private:
     static BoardRenderer* s_singleton;
-    
+    Board& m_board;
     unsigned m_windowWidth, m_windowHeight;
+    Vector2D m_boardPos;  // The offset of board in BackGround.png
+    
     unsigned m_backgroundWidth, m_backgroundHeight;
     GLuint m_backgroundTexture;
     std::vector<GLuint> m_diamondTextures;
+    
     void loadTextures();
     bool initTextureFromRawImage(char *image, int width, int height, GLuint texName);
     
@@ -94,12 +101,13 @@ private:
     void drawTimeBar();
     void drawGameOver();
     
-    Vector2D m_boardPos;     // The offset of board in BackGround.png
     Vector2D getDiamondCurrentPosition(const DiamondCoords& diamond) const;
     Vector2D getDiamondFixedPosition(const DiamondCoords& diamond) const;
     
-    Board& m_board;
-    
+//    
+// Animation
+//
+private:
     Board::Animaton m_currentAnimation;
     SpritesArray m_sprites;
     
@@ -148,16 +156,6 @@ public:
     virtual void onDiamondsFallen(Board* sender, 
                                  const CoordsArray& fromCoordsArray, 
                                  const CoordsArray& toCoordsArray);
-    
-#if USE_PICKING_BY_COLOR_ID
-public:
-    void drawInPickingMode(const Board& board);
-    
-private:
-    GLuint fbo;
-    GLuint pickingTexture;
-    void initPickingByColorID();
-#endif
 };
 
 #endif

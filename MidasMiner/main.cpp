@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "UnitTest++.h"
-#include "MidasMiner.h"
+#include "GLUTEventHandler.h"
 
 // GLUT callbacks are native C function pointers. Neither Boost.Bind nor mem_fn can
 // convert class member functions to them, so we have to use a small C delegate 

@@ -1,29 +1,9 @@
-#include <sstream>
 #include "Board.h"
 #include "RandomNumberGenerator.h"
 
 
-std::string Matrix::string() const
-{
-    std::stringstream ss;
-    for (unsigned int j = 0; j < rows(); ++ j) {
-        for (unsigned int i = 0; i < columns(); ++ i) {
-            ss << operator() (j, i) << " ";
-        }
-        ss << std::endl;
-    }
-    return ss.str();
-}
-
-bool Board::isLineCreatedByAddingDiamond(const Matrix& matrix, unsigned y, unsigned x, unsigned diamond)
-{
-    assert(matrix(y, x) == 0);
-    Matrix temp = matrix;
-    temp(y, x) = diamond;
-    return 0 != findLines(temp, NULL);
-}
-
-void Board::initRandomly(unsigned size, unsigned diamondTypes, RandomNumberGenerator& rand)
+void Board::initRandomly(unsigned size, unsigned diamondTypes, 
+                         RandomNumberGenerator& rand)
 {
     assert(diamondTypes > 0);
     m_diamondMatrix = Matrix(size, size);
@@ -33,7 +13,8 @@ void Board::initRandomly(unsigned size, unsigned diamondTypes, RandomNumberGener
     Board::initMatrixRandomly(m_futureMatrix, diamondTypes, rand);   
 }
 
-void Board::initMatrixRandomly(Matrix& matrix, unsigned diamondTypes, RandomNumberGenerator& rand)
+void Board::initMatrixRandomly(Matrix& matrix, unsigned diamondTypes, 
+                               RandomNumberGenerator& rand)
 {
     for (unsigned int i = 0; i < matrix.columns(); ++ i) {
         for (unsigned int j = 0; j < matrix.rows(); ++ j) {
@@ -47,16 +28,28 @@ void Board::initMatrixRandomly(Matrix& matrix, unsigned diamondTypes, RandomNumb
         }
     }
 }
-    
+
+bool Board::isLineCreatedByAddingDiamond(const Matrix& matrix, 
+                                         unsigned y, unsigned x, unsigned diamond)
+{
+    assert(matrix(y, x) == 0);
+    Matrix temp = matrix;
+    temp(y, x) = diamond;
+    return 0 != findLines(temp, NULL);
+}
+
 unsigned Board::findLines(const Matrix& matrix, Lines* result)
 {
     if (result) result->clear();
     
-    unsigned diamondTypes = getMaxElement(matrix);
     unsigned linesFound = 0;
+    
+    // It can be optimized by using a std::set but since we only have
+    // 5 diamonds, we check for all of them.
+    unsigned diamondTypes = getMaxElement(matrix);
     for (unsigned d = 1; d <= diamondTypes; ++ d) {
         
-        // Find horizonal lines
+        // Find horizontal lines
         for (unsigned j = 0; j < matrix.rows(); ++ j) {
             for (unsigned i = 0; i < matrix.columns(); ++ i) {
                 CoordsArray coordsArray;
@@ -167,7 +160,9 @@ void Board::collapse(bool firstIteration)
 {
     bool holesFound = false;
     
+    //
     // Find lines and replace them with holes
+    //
     Lines lines;
     CoordsArray removedDiamonds;
     if (findLines(m_diamondMatrix, &lines) > 0) {
@@ -190,7 +185,8 @@ void Board::collapse(bool firstIteration)
     if (firstIteration) {
         m_iteration = 0;
         m_rowsOfLastKnownEmptyDiamond.clear();
-        m_rowsOfLastKnownEmptyDiamond.resize(m_diamondMatrix.columns(), m_diamondMatrix.rows() - 1);
+        m_rowsOfLastKnownEmptyDiamond.resize(m_diamondMatrix.columns(), 
+                                             m_diamondMatrix.rows() - 1);
     
         printf("\n--\nbefore collapse:\n%s\n%s", 
                m_futureMatrix.string().c_str(),
@@ -208,7 +204,8 @@ void Board::onAnimationRemovingFnished()
     moveBoardDownwardOneStep();
 }
 
-CoordsArray Board::generateCoordinatesOfVerticalLine(const DiamondCoords& top, const DiamondCoords& bottom)
+CoordsArray Board::generateCoordinatesOfVerticalLine(const DiamondCoords& top, 
+                                                     const DiamondCoords& bottom)
 {
     assert(top.col == bottom.col);
     assert(top.row <= bottom.row);
@@ -231,6 +228,10 @@ void Board::moveBoardDownwardOneStep()
                     holeFound = true;
                     m_rowsOfLastKnownEmptyDiamond[i] = j;
                     moveColumnDownward(j, i);
+                    
+                    //
+                    // Create data needed by the animation
+                    //
             
                     CoordsArray currPos = generateCoordinatesOfVerticalLine(DiamondCoords(0, i),
                                                                             DiamondCoords(j, i));
