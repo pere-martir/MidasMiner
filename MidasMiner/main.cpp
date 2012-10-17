@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-
+#include <string.h>
 
 #include "UnitTest++.h"
 #include "MidasMiner.h"
@@ -40,18 +40,17 @@ void idle()
 
 int main(int argc, char** argv)
 {
-#if 1
-    g_eventHandler.init(argc, argv);
-    
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboard);
-    glutMouseFunc(mouse);
-    glutIdleFunc(idle);
-    glutMainLoop();
-#else
-    UnitTest::RunAllTests();
-#endif
+    if (1 == argc) {
+        g_eventHandler.init(argc, argv);    
+        glutDisplayFunc(display);
+        glutReshapeFunc(reshape);
+        glutKeyboardFunc(keyboard);
+        glutMouseFunc(mouse);
+        glutIdleFunc(idle);
+        glutMainLoop();
+    } else if (argc == 2 && 0 == strcmp(argv[1], "-t")) {
+        UnitTest::RunAllTests();
+    }
     
     return 0;
 }
