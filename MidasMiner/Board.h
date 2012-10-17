@@ -107,7 +107,7 @@ public:
     
     
 // These methods are made public only for unit tests
-public:
+public:    
     unsigned findLines(Lines* result = NULL) const { return findLines(m_diamondMatrix, result); }
     unsigned findLines(const Matrix& matrix, Lines* result = NULL) const;
     
@@ -115,6 +115,8 @@ public:
     // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix.
     // The board keeps collapsing until there is no line.
     void collapse(bool firstIteration = true);
+    
+    CoordsArray generateCoordinatesOfVerticalLine(const DiamondCoords& top, const DiamondCoords& bottom);
     
 
 //

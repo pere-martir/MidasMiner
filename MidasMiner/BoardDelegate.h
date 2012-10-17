@@ -14,11 +14,11 @@
 
 struct DiamondCoords 
 {
-    unsigned row, col;
+    int row, col;
     
     // The coordinates are in the row-major order because they are 
     // the subscripts of Matrix, which is also row-major.
-    DiamondCoords(unsigned r = 0, unsigned c = 0) : row(r), col(c) {}
+    DiamondCoords(int r = 0, int c = 0) : row(r), col(c) {}
     
     bool operator == (const DiamondCoords& other) const {
         return row == other.row && col == other.col;
@@ -58,8 +58,8 @@ public:
     // stored in 'toCoordsArray', and its previous coordinates in 'fromCoordsArray' of the 
     // same array index. 'toCoordsArray' and 'fromCoordsArray' will always have the same size.
     virtual void onDiamondsFallen(Board* sender, 
-                                  const CoordsArray& toCoordsArray, 
-                                  const CoordsArray& fromCoordsArray) = 0;
+                                  const CoordsArray& fromCoordsArray, 
+                                  const CoordsArray& toCoordsArray) = 0;
 };
 
 
@@ -76,8 +76,8 @@ public:
     virtual void onDiamondsRemoved(Board* sender);
     
     virtual void onDiamondsFallen(Board* sender, 
-                                  const CoordsArray& toCoordsArray, 
-                                  const CoordsArray& fromCoordsArray);
+                                  const CoordsArray& fromCoordsArray, 
+                                  const CoordsArray& toCoordsArray);
 };
 
 

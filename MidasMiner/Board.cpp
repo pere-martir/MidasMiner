@@ -207,6 +207,16 @@ void Board::onAnimationRemovingFnished()
     moveBoardDownwardOneStep();
 }
 
+CoordsArray Board::generateCoordinatesOfVerticalLine(const DiamondCoords& top, const DiamondCoords& bottom)
+{
+    assert(top.col == bottom.col);
+    assert(top.row <= bottom.row);
+    CoordsArray array;
+    for (int j = top.row; j <= bottom.row; ++ j)
+        array.push_back(DiamondCoords(j, top.col));
+    return array;
+}
+
 void Board::moveBoardDownwardOneStep()
 {
     CoordsArray fromCoordsArray, toCoordsArray;
@@ -217,9 +227,20 @@ void Board::moveBoardDownwardOneStep()
             bool holeFound = false;
             for (int j = m_rowsOfLastKnownEmptyDiamond[i]; j >= 0; -- j) {
                 if (m_diamondMatrix(j, i) == HOLE) {
-                    m_rowsOfLastKnownEmptyDiamond[i] = j;
                     holeFound = true;
+                    m_rowsOfLastKnownEmptyDiamond[i] = j;
                     moveColumnDownward(j, i);
+            
+                    CoordsArray currPos = generateCoordinatesOfVerticalLine(DiamondCoords(0, i),
+                                                                            DiamondCoords(j, i));
+                    CoordsArray prevPos;
+                    CoordsArray::const_iterator c = currPos.begin();
+                    for (; currPos.end() != c; ++c)
+                        prevPos.push_back(DiamondCoords(c->row - 1, c->col));
+                    
+                    toCoordsArray.insert(toCoordsArray.end(), currPos.begin(), currPos.end());
+                    fromCoordsArray.insert(fromCoordsArray.end(), prevPos.begin(), prevPos.end());
+                    
                     // There may be more holes above but we will handle them in the next iteration 
                     // so that all diamonds drop at the same speed.
                     break; 
@@ -236,7 +257,7 @@ void Board::moveBoardDownwardOneStep()
     
     if (m_delegate) {
         m_delegate->onDiamondsFallen(this, fromCoordsArray, toCoordsArray); 
-        // continue in onDiamondsFallenAnimationFinished() 
+        // continue in onAnimationFallingFinished() 
     }
 }
 

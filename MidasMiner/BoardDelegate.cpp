@@ -14,8 +14,8 @@ void DefaultBoardDelegate::onDiamondsRemoved(Board* sender)
 }
     
 void DefaultBoardDelegate::onDiamondsFallen(Board* sender, 
-                                 const CoordsArray& toCoordsArray, 
-                                 const CoordsArray& fromCoordsArray)
+                                 const CoordsArray& fromCoordsArray, 
+                                 const CoordsArray& toCoordsArray)
 {
     sender->onAnimationFinished(Board::ANIMATION_FALLING);
 }

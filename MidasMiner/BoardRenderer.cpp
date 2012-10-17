@@ -4,8 +4,7 @@
 
 BoardRenderer* BoardRenderer::s_singleton = NULL;
 
-BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(false), 
-                                             m_animationFinished(true)
+BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_hasPickedDiamond(false)
 {
     assert(NULL == BoardRenderer::s_singleton);
     BoardRenderer::s_singleton = this;
@@ -101,7 +100,7 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
             
             DiamondCoords corrds = DiamondCoords(j, i);
             
-            Vector2D pos = getDiamondPosition(corrds);
+            Vector2D pos = getDiamondCurrentPosition(corrds);
             glBindTexture(GL_TEXTURE_2D, m_diamondTextures[diamond - 1]);
             
             glBegin(GL_QUADS);
@@ -127,7 +126,7 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
         glLineWidth(2);
         glBegin(GL_LINE_LOOP);
         glColor3f(1.0f, 1.0f, 1.0f);
-        Vector2D pos = getDiamondPosition(m_pickedDiamond);
+        Vector2D pos = getDiamondCurrentPosition(m_pickedDiamond);
         glVertex2f(pos.x, pos.y);
         glVertex2f(pos.x + DIAMOND_SIZE, pos.y);
         glVertex2f(pos.x + DIAMOND_SIZE, pos.y + DIAMOND_SIZE);
@@ -137,35 +136,23 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     }
 }
 
-Vector2D BoardRenderer::getDiamondPosition(const DiamondCoords& diamond) const
+Vector2D BoardRenderer::mapDiamondCoordinatesToPosition(const DiamondCoords& diamond) const
+{
+    return Vector2D(diamond.col * DIAMOND_SIZE, diamond.row * DIAMOND_SIZE);
+}
+
+Vector2D BoardRenderer::getDiamondCurrentPosition(const DiamondCoords& diamondCoords) const
 {
     SpritesArray::const_iterator s = m_sprites.begin();
     for (; m_sprites.end() != s; ++ s) {
-        if (s->diamond == diamond) {
+        if (s->diamond == diamondCoords) {
             return s->pos;
         }
     }
     
-    return Vector2D(diamond.col * DIAMOND_SIZE, diamond.row * DIAMOND_SIZE);
+    return mapDiamondCoordinatesToPosition(diamondCoords);
 }
 
-
-void BoardRenderer::onDiamondsFallen(Board* sender, 
-                                    const CoordsArray& toCoordsArray, 
-                                    const CoordsArray& fromCoordsArray)
-{
-    assert(m_sprites.empty()); // we're not currently animating anything
-    m_sprites.clear();
-    for (unsigned i = 0; i < toCoordsArray.size(); ++ i) {
-        Sprite s;
-        s.diamond = toCoordsArray[i];
-        s.pos = getDiamondPosition(fromCoordsArray[i]);
-        m_sprites.push_back(s);
-    }
-        
-    m_animationFinished = false;
-    glutTimerFunc(100, BoardRenderer::glutTimerHandler, 0);
-}
 
 void BoardRenderer::setTimer(unsigned milliseconds)
 {
@@ -178,8 +165,33 @@ void BoardRenderer::onTimer()
     SpritesArray::iterator s = m_sprites.begin();
     for (; m_sprites.end() != s; ++ s) {
         if (s->pos != s->finalPos) {
-            s->pos += s->velocity;
             moving = true;
+            s->pos += s->velocity;
+            
+            if (s->velocity.y == 0) {
+                if (s->velocity.x > 0) {
+                    if (s->pos.x > s->finalPos.x) 
+                        s->pos.x = s->finalPos.x;
+                } else if (s->velocity.x < 0) {
+                    if (s->pos.x < s->finalPos.x)
+                        s->pos.x = s->finalPos.x;
+                } else {
+                    assert(false);
+                }
+            } else if (s->velocity.x == 0) {
+                if (s->velocity.y > 0) {
+                    if (s->pos.y > s->finalPos.y) 
+                        s->pos.y = s->finalPos.y;
+                } else if (s->velocity.y < 0) {
+                    if (s->pos.y < s->finalPos.y)
+                        s->pos.y = s->finalPos.y;
+                } else {
+                    assert(false);
+                }
+            } else {
+                // The diamonds can only move horizonally or vertically
+                assert(false);
+            }   
         }
     }
     
@@ -215,14 +227,14 @@ void BoardRenderer::setupSwapAnimation(const DiamondCoords& d1, const DiamondCoo
     
     Sprite s1;
     s1.diamond = d1;
-    s1.pos = getDiamondPosition(d2);
-    s1.finalPos = getDiamondPosition(d1);
+    s1.pos = getDiamondCurrentPosition(d2);
+    s1.finalPos = getDiamondCurrentPosition(d1);
     s1.velocity = (s1.finalPos - s1.pos) / 10;
     
     Sprite s2;
     s2.diamond = d2;
-    s2.pos = getDiamondPosition(d1);
-    s2.finalPos = getDiamondPosition(d2);
+    s2.pos = getDiamondCurrentPosition(d1);
+    s2.finalPos = getDiamondCurrentPosition(d2);
     s2.velocity = (s2.finalPos - s2.pos) / 10;
     
     m_sprites.push_back(s1);
@@ -238,6 +250,25 @@ void BoardRenderer::onDiamondsRemoved(Board* sender)
     m_currentAnimation = Board::ANIMATION_REMOVING;
     glutPostRedisplay();
     setTimer(500);
+}
+
+void BoardRenderer::onDiamondsFallen(Board* sender, 
+                                     const CoordsArray& fromCoordsArray, 
+                                     const CoordsArray& toCoordsArray)
+{
+    assert(m_sprites.empty()); // we're not currently animating anything
+    m_sprites.clear();
+    
+    for (unsigned i = 0; i < toCoordsArray.size(); ++ i) {
+        Sprite s;
+        s.diamond = toCoordsArray[i];
+        s.pos = mapDiamondCoordinatesToPosition(fromCoordsArray[i]);
+        s.finalPos = mapDiamondCoordinatesToPosition(toCoordsArray[i]);
+        s.velocity = (s.finalPos - s.pos) / 10;
+        m_sprites.push_back(s);
+    }
+    m_currentAnimation = Board::ANIMATION_FALLING;
+    setTimer();
 }
 
 
