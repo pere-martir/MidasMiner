@@ -8,9 +8,9 @@ The Model uses 'delegate' pattern to notify the View (BoardRenederer) what's is 
 
 I want to keep the program portable and only use GLUT functionality so that platform-dependent multithreading API is not considered.
 
-* View: class BoardRenderer. All rendering code of OpenGL happen here. It setups the OpenGL to draw in 2D mode. The game play
+* View: class BoardRenderer. All rendering code of OpenGL happen here. It setups the OpenGL to draw in 2D mode. The "sprites" are the diamonding which are being animated. There are three types of animations: swapping diamonds, removing diamonds (a X is drawn in its original place), falling (the diamonds are dropping from the top).
 
-* Controller: class GLUTEventHandler. This class handles the keyboard and mouse events. The player uses the mouse to click two diamonds to swap them. Press 'ESC' to leave the program. 
+* Controller: class GLUTEventHandler. This class handles the keyboard and mouse events. The player uses the mouse to click two diamonds to swap them. Press 'ESC' to leave the program. It also controls the game play time.
 
 UnitTest++ is a lightweight xUnit-like framework I've used for years. Executing the program with the command line switch '-t' to run unit tests. I don't strip the 'printf' on purpose.
 
