@@ -5,6 +5,7 @@ GLUTEventHandler *GLUTEventHandler::s_singleton = NULL;
 
 void GLUTEventHandler::init(int argc, char** argv)
 {
+    m_totalTime = m_remainingTime = 60 * 1000; // one minute, in ms
     m_board.initRandomly(8, 5, m_randNumGenerator);
  
     // Small non-random boards. They are only used for testing.

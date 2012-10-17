@@ -14,7 +14,6 @@ public:
     {
         assert(!GLUTEventHandler::s_singleton);
         GLUTEventHandler::s_singleton = this;
-        m_totalTime = m_remainingTime = 60 * 1000; // one minute, in ms
     }
     
     ~GLUTEventHandler() { delete m_renderer; }

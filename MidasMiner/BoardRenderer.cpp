@@ -146,7 +146,7 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight,
     if (0 < remainingTimePercentage) {
         drawCrossOnRecentlyRemovedDiamonds();
         drawPickedSquare();
-    } else {
+    } else if (!anyAnimationInProgress()) {
         drawGameOver();
     }
 }
@@ -420,13 +420,13 @@ void BoardRenderer::animateSprites()
     }
     
     if (!finished) {
-        glutPostRedisplay();
         setAnimationTimer();
     } else {
         m_sprites.clear();
         m_recentlyRemovedDiamonds.clear();
         m_board.onAnimationFinished(m_currentAnimation);
     } 
+    glutPostRedisplay();
 }
 
 void BoardRenderer::onDiamondsSwapped(Board* sender, 
@@ -493,7 +493,7 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
         s.diamond = toCoordsArray[i];
         s.pos = getDiamondFixedPosition(fromCoordsArray[i]);
         s.finalPos = getDiamondFixedPosition(toCoordsArray[i]);
-        s.velocity = (s.finalPos - s.pos) / 5;
+        s.velocity = (s.finalPos - s.pos) / 4;
         m_sprites.push_back(s);
     }
     m_currentAnimation = Board::ANIMATION_FALLING;
