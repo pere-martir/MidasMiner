@@ -108,8 +108,8 @@ public:
     
 // These methods are made public only for unit tests
 public:    
-    unsigned findLines(Lines* result = NULL) const { return findLines(m_diamondMatrix, result); }
-    unsigned findLines(const Matrix& matrix, Lines* result = NULL) const;
+    unsigned findLines(Lines* result = NULL) const { return Board::findLines(m_diamondMatrix, result); }
+    static unsigned findLines(const Matrix& matrix, Lines* result = NULL);
     
     // Move each column independently "downwards" (toward to last row) until all empty diamonds in the 
     // Board are occupied. The new diamonds enter from the top and are suppiled by m_futureMatrix.
@@ -153,7 +153,8 @@ private:
         return maxElement;
     }
     
-    bool isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond);
+    static void initMatrixRandomly(Matrix& matrix, unsigned diamondTypes, RandomNumberGenerator& rand);
+    static bool isLineCreatedByAddingDiamond(const Matrix& matrix, unsigned y, unsigned x, unsigned diamond);
     
     bool hasHole() const
     {

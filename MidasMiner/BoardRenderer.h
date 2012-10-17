@@ -111,7 +111,9 @@ private:
     void setTimer(unsigned milliseconds = 0);
     void animateSprites();
     void setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2);
-    bool anyAnimationInProgress() const { return !m_sprites.empty(); }
+    bool anyAnimationInProgress() const { 
+        return !m_sprites.empty() || !m_recentlyRemovedDiamonds.empty(); 
+    }
 
 //
 // BoardDelegate methods

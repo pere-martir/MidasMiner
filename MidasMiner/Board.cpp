@@ -15,41 +15,40 @@ std::string Matrix::string() const
     return ss.str();
 }
 
-bool Board::isLineCreatedByAddingDiamond(unsigned y, unsigned x, unsigned diamond)
+bool Board::isLineCreatedByAddingDiamond(const Matrix& matrix, unsigned y, unsigned x, unsigned diamond)
 {
-    Matrix matrix = m_diamondMatrix;
     assert(matrix(y, x) == 0);
-    matrix(y, x) = diamond;
-    return 0 != findLines(matrix, NULL);
+    Matrix temp = matrix;
+    temp(y, x) = diamond;
+    return 0 != findLines(temp, NULL);
 }
 
 void Board::initRandomly(unsigned size, unsigned diamondTypes, RandomNumberGenerator& rand)
 {
     assert(diamondTypes > 0);
     m_diamondMatrix = Matrix(size, size);
-    for (unsigned int i = 0; i < m_diamondMatrix.columns(); ++ i) {
-        for (unsigned int j = 0; j < m_diamondMatrix.rows(); ++ j) {
+    Board::initMatrixRandomly(m_diamondMatrix, diamondTypes, rand);
+    
+    m_futureMatrix = Matrix(20, size);
+    Board::initMatrixRandomly(m_futureMatrix, diamondTypes, rand);   
+}
+
+void Board::initMatrixRandomly(Matrix& matrix, unsigned diamondTypes, RandomNumberGenerator& rand)
+{
+    for (unsigned int i = 0; i < matrix.columns(); ++ i) {
+        for (unsigned int j = 0; j < matrix.rows(); ++ j) {
             while (true) {
                 unsigned diamond = 1 + rand.next() % diamondTypes;
-                if (!isLineCreatedByAddingDiamond(j, i, diamond)) {
-                    m_diamondMatrix(j, i) = diamond;
+                if (!Board::isLineCreatedByAddingDiamond(matrix, j, i, diamond)) {
+                    matrix(j, i) = diamond;
                     break;
                 }
             }
         }
     }
-    
-    // Some lines may be formed. Don't care. Let them be the bonus (free) lines
-    // for the player.
-    m_futureMatrix = Matrix(3, size);
-    for (unsigned int i = 0; i < m_futureMatrix.columns(); ++ i) {
-        for (unsigned int j = 0; j < m_futureMatrix.rows(); ++ j) {
-            m_futureMatrix(j, i) = 1 + rand.next() % diamondTypes;
-        }
-    }
 }
-
-unsigned Board::findLines(const Matrix& matrix, Lines* result) const
+    
+unsigned Board::findLines(const Matrix& matrix, Lines* result)
 {
     if (result) result->clear();
     
