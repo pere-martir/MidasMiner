@@ -231,7 +231,7 @@ void BoardRenderer::drawDiamonds()
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
     //
-    // Draw diamongd
+    // Draw diamonds
     //
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -54,7 +54,7 @@ public:
 
     virtual void onDiamondsRemoved(Board* sender, const CoordsArray& removedDiamonds) = 0;
     
-    // Notify thes diamonds have been moved. For each diamond, its current coordinates are 
+    // Notify the diamonds have fallen. For each diamond, its current coordinates are 
     // stored in 'toCoordsArray', and its previous coordinates in 'fromCoordsArray' of the 
     // same array index. 'toCoordsArray' and 'fromCoordsArray' will always have the same size.
     virtual void onDiamondsFallen(Board* sender, 

@@ -29,6 +29,7 @@ void Board::initMatrixRandomly(Matrix& matrix, unsigned diamondTypes,
     }
 }
 
+// Return true if add 'diamond' at (y,x) to 'martix' creates any line.
 bool Board::isLineCreatedByAddingDiamond(const Matrix& matrix, 
                                          unsigned y, unsigned x, unsigned diamond)
 {
@@ -38,6 +39,8 @@ bool Board::isLineCreatedByAddingDiamond(const Matrix& matrix,
     return 0 != findLines(temp, NULL);
 }
 
+// Return the number of lines in 'matrix'. 
+// The lines found are stored in 'result'.
 unsigned Board::findLines(const Matrix& matrix, Lines* result)
 {
     if (result) result->clear();
@@ -201,7 +204,7 @@ void Board::collapse(bool firstIteration)
 
 void Board::onAnimationRemovingFnished()
 {
-    moveBoardDownwardOneStep();
+    applyGravityToDiamonds();
 }
 
 CoordsArray Board::generateCoordinatesOfVerticalLine(const DiamondCoords& top, 
@@ -215,7 +218,11 @@ CoordsArray Board::generateCoordinatesOfVerticalLine(const DiamondCoords& top,
     return array;
 }
 
-void Board::moveBoardDownwardOneStep()
+// A diamond falls if there is a hole below it. The diamond doesn't fall until all
+// holes are occupied. Each call to this function only moves the diamond downward
+// by one hole. It's necessary to call this function repetitively until all holes 
+// are occupied. This function also introduces new diamonds from the top of the board.
+void Board::applyGravityToDiamonds()
 {
     CoordsArray fromCoordsArray, toCoordsArray;
     for (unsigned i = 0; i < m_diamondMatrix.columns(); ++ i) {  
@@ -232,7 +239,6 @@ void Board::moveBoardDownwardOneStep()
                     //
                     // Create data needed by the animation
                     //
-            
                     CoordsArray currPos = generateCoordinatesOfVerticalLine(DiamondCoords(0, i),
                                                                             DiamondCoords(j, i));
                     CoordsArray prevPos;
@@ -267,7 +273,7 @@ void Board::onAnimationFallingFinished()
 {
     if (hasHole()) {
         m_iteration ++; 
-        moveBoardDownwardOneStep();
+        applyGravityToDiamonds();
     } else {
         collapse();
     }

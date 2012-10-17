@@ -112,7 +112,7 @@ private:
     
     bool removeLines();
     
-    void moveBoardDownwardOneStep();
+    void applyGravityToDiamonds();
     // (row, col) must be a hole.
     void moveColumnDownward(unsigned row, unsigned col);
     void rotateColumnDownward(Matrix& matrix, unsigned col);

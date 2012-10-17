@@ -50,10 +50,15 @@ struct Vector2D
 
 struct Sprite
 {
-    DiamondCoords diamond; // the final coordinates
+    // This the coordinates which the diamond should eventually be.
+    // 'pos' is ususally initialized "not" to be in this place.
+    DiamondCoords diamond; 
+    
     Vector2D pos; // the current position
     Vector2D finalPos;
-    Vector2D velocity; // velocity is added periodically to pos until pos reaches finalPos
+    
+    // velocity is added periodically to pos until pos reaches finalPos
+    Vector2D velocity;
 };
 
 typedef std::vector<Sprite> SpritesArray;
@@ -61,7 +66,7 @@ typedef std::vector<Sprite> SpritesArray;
 class BoardRenderer : public BoardDelegate
 {
 public:
-    static const unsigned int DIAMOND_SIZE = 40;
+    static const unsigned int DIAMOND_SIZE = 40; // pixels
     
     static BoardRenderer* getSingleton() 
     { 
@@ -113,6 +118,7 @@ private:
     
     bool m_hasPickedDiamond;
     DiamondCoords m_pickedDiamond;
+    
     CoordsArray m_recentlyRemovedDiamonds;
     
     static const unsigned ANIMATION_TIMER_ID = 0;
