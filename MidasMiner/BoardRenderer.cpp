@@ -108,7 +108,8 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     
     glDisable(GL_DEPTH_TEST);
     glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearStencil(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     
     drawBackground();
     glTranslatef(m_boardPos.x, m_boardPos.y, 0);
@@ -145,7 +146,29 @@ void BoardRenderer::drawDiamonds()
 {
     glEnable(GL_TEXTURE_2D); 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    //
+    // Clip the drawing outside the "frame" of the mine entrance in the  
+    // background image.
+    //
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 1, 1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glColorMask(0, 0, 0, 0);
+
+    unsigned boardSize = m_board.size() * DIAMOND_SIZE;
+    glBegin(GL_QUADS);
+    glVertex2f(0, 0);
+    glVertex2f(boardSize, 0);
+    glVertex2f(boardSize, boardSize);
+    glVertex2f(0, boardSize);
+    glEnd();
+
+    glColorMask(1, 1, 1, 1);
+    glStencilFunc(GL_EQUAL, 1, 1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     
+
     for (unsigned int i = 0; i < m_board.columns(); ++ i) {
         for (unsigned int j = 0; j < m_board.rows(); ++ j) {
             unsigned diamond = m_board(j, i);
@@ -175,6 +198,7 @@ void BoardRenderer::drawDiamonds()
             glEnd();
         }
     }
+    glDisable(GL_STENCIL_TEST);
 }
 
 void BoardRenderer::drawPickedSquare() 

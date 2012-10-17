@@ -41,7 +41,7 @@ void GLUTEventHandler::init(int argc, char** argv)
 #endif
 
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL);
     
     //glutInitWindowSize(m_renderer->backgroundWidth(), m_renderer->backgroundHeight());
     glutInitWindowSize(755, 600);

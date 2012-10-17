@@ -58,6 +58,12 @@
 		68CD5DE5162D64CC00699AB9 /* MidasMiner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidasMiner.cpp; sourceTree = "<group>"; };
 		68CD5DE7162DB67000699AB9 /* BoardDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoardDelegate.h; sourceTree = "<group>"; };
 		68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoardDelegate.cpp; sourceTree = "<group>"; };
+		68EBE162162EC7D40089FF03 /* BackGround.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BackGround.png; sourceTree = "<group>"; };
+		68EBE163162EC7D40089FF03 /* Blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blue.png; sourceTree = "<group>"; };
+		68EBE164162EC7D40089FF03 /* Green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Green.png; sourceTree = "<group>"; };
+		68EBE165162EC7D40089FF03 /* Purple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Purple.png; sourceTree = "<group>"; };
+		68EBE166162EC7D40089FF03 /* Red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Red.png; sourceTree = "<group>"; };
+		68EBE167162EC7D40089FF03 /* Yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Yellow.png; sourceTree = "<group>"; };
 		68F4FED6162B372D00F13811 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		68F4FED8162B374100F13811 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		68F4FEDC162B653C00F13811 /* pngLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngLoad.h; sourceTree = "<group>"; };
@@ -155,6 +161,7 @@
 		6896488D162B35F900D719E3 /* MidasMiner */ = {
 			isa = PBXGroup;
 			children = (
+				68EBE160162EC7B00089FF03 /* Textures */,
 				68FE0649162C98A8007A31AB /* Tests */,
 				68FE0648162C9893007A31AB /* pngLoad */,
 				68FE0641162C91B8007A31AB /* main.cpp */,
@@ -170,6 +177,19 @@
 				68CD5DE8162DFE1B00699AB9 /* BoardDelegate.cpp */,
 			);
 			path = MidasMiner;
+			sourceTree = "<group>";
+		};
+		68EBE160162EC7B00089FF03 /* Textures */ = {
+			isa = PBXGroup;
+			children = (
+				68EBE162162EC7D40089FF03 /* BackGround.png */,
+				68EBE163162EC7D40089FF03 /* Blue.png */,
+				68EBE164162EC7D40089FF03 /* Green.png */,
+				68EBE165162EC7D40089FF03 /* Purple.png */,
+				68EBE166162EC7D40089FF03 /* Red.png */,
+				68EBE167162EC7D40089FF03 /* Yellow.png */,
+			);
+			name = Textures;
 			sourceTree = "<group>";
 		};
 		68F4FF5A162C78F600F13811 /* UnitTest++ */ = {
