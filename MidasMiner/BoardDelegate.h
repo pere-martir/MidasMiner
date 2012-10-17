@@ -52,7 +52,7 @@ public:
     virtual void onPreviousSwapCancelled(Board* sender,
                                          const DiamondCoords& d1, const DiamondCoords& d2) = 0;
 
-    virtual void onDiamondsRemoved(Board* sender) = 0;
+    virtual void onDiamondsRemoved(Board* sender, const CoordsArray& removedDiamonds) = 0;
     
     // Notify thes diamonds have been moved. For each diamond, its current coordinates are 
     // stored in 'toCoordsArray', and its previous coordinates in 'fromCoordsArray' of the 
@@ -73,7 +73,7 @@ public:
     virtual void onPreviousSwapCancelled(Board* sender,
                                          const DiamondCoords& d1, const DiamondCoords& d2) {}
     
-    virtual void onDiamondsRemoved(Board* sender);
+    virtual void onDiamondsRemoved(Board* sender, const CoordsArray& removedDiamonds);
     
     virtual void onDiamondsFallen(Board* sender, 
                                   const CoordsArray& fromCoordsArray, 

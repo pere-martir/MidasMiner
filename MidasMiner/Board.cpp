@@ -170,12 +170,14 @@ void Board::collapse(bool firstIteration)
     
     // Find lines and replace them with holes
     Lines lines;
+    CoordsArray removedDiamonds;
     if (findLines(m_diamondMatrix, &lines) > 0) {
         Lines::const_iterator lineIt = lines.begin();
         for (; lines.end() != lineIt; ++ lineIt) {
             const CoordsArray& line = *lineIt;
             CoordsArray::const_iterator coords = line.begin();
             for (; line.end() != coords; coords ++) {
+                removedDiamonds.push_back(*coords);
                 m_diamondMatrix(coords->row, coords->col) = HOLE;
                 holesFound = true;
             }
@@ -197,7 +199,7 @@ void Board::collapse(bool firstIteration)
     }
     
     if (m_delegate) {
-        m_delegate->onDiamondsRemoved(this);
+        m_delegate->onDiamondsRemoved(this, removedDiamonds);
         // continue in onAnimationRemovingFnished
     }
 }
@@ -263,15 +265,6 @@ void Board::moveBoardDownwardOneStep()
 
 void Board::onAnimationFallingFinished() 
 {
-#if 0
-    bool movingDonwardFinished = true;
-    for (unsigned c = 0; c < m_rowsOfLastKnownEmptyDiamond.size(); ++ c) {
-        if (m_rowsOfLastKnownEmptyDiamond[c] != -1) {
-            movingDonwardFinished = false;
-            break;
-        }
-    }
-#endif
     if (hasHole()) {
         m_iteration ++; 
         moveBoardDownwardOneStep();

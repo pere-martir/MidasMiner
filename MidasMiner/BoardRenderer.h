@@ -87,28 +87,31 @@ private:
     void setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight);
     void drawBackground();
     void drawDiamonds();
+    void drawCrossOnRecentlyRemovedDiamonds();
     void drawPickedSquare();
     
     Vector2D m_boardPos;     // The offset of board in BackGround.png
     Vector2D getDiamondCurrentPosition(const DiamondCoords& diamond) const;
-    Vector2D mapDiamondCoordinatesToPosition(const DiamondCoords& diamond) const;
+    Vector2D getDiamondFixedPosition(const DiamondCoords& diamond) const;
     
     Board& m_board;
-    bool m_hasPickedDiamond;
-    DiamondCoords m_pickedDiamond;
     
     Board::Animaton m_currentAnimation;
     SpritesArray m_sprites;
     
+    bool m_hasPickedDiamond;
+    DiamondCoords m_pickedDiamond;
+    CoordsArray m_recentlyRemovedDiamonds;
+    
     static void glutTimerHandler(int value) 
     {
-        BoardRenderer::getSingleton()->onTimer();
+        BoardRenderer::getSingleton()->animateSprites();
     }
     
     void setTimer(unsigned milliseconds = 0);
-    void onTimer();
-    
+    void animateSprites();
     void setupSwapAnimation(const DiamondCoords& d1, const DiamondCoords& d2);
+    bool anyAnimationInProgress() const { return !m_sprites.empty(); }
 
 //
 // BoardDelegate methods
@@ -120,7 +123,7 @@ public:
     virtual void onPreviousSwapCancelled(Board* sender,
                                          const DiamondCoords& d1, const DiamondCoords& d2);
     
-    virtual void onDiamondsRemoved(Board* sender);
+    virtual void onDiamondsRemoved(Board* sender, const CoordsArray& removedDiamonds);
     
     virtual void onDiamondsFallen(Board* sender, 
                                  const CoordsArray& fromCoordsArray, 

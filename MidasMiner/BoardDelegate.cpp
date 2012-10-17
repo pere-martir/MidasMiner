@@ -8,7 +8,7 @@ void DefaultBoardDelegate::onDiamondsSwapped(Board* sender,
     sender->onAnimationFinished(Board::ANIMATION_SWAPPING);
 }
     
-void DefaultBoardDelegate::onDiamondsRemoved(Board* sender)
+void DefaultBoardDelegate::onDiamondsRemoved(Board* sender, const CoordsArray& removedDiamonds)
 {
     sender->onAnimationFinished(Board::ANIMATION_REMOVING);
 }
