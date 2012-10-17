@@ -92,16 +92,27 @@ bool BoardRenderer::initTextureFromRawImage(char *image, int width, int height, 
     return true; 
 }
 
-void BoardRenderer::setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight)
+// Setup the origin at the upper-left corner if originAtLeftUpperCorner = true (default)
+// Setup the origin at the lower-left corner if originAtLeftUpperCorner = false,
+// it's only used when drawing the text.
+void BoardRenderer::setupProjectAndModelViewMatrix(unsigned windowWidth, 
+                                                   unsigned windowHeight, 
+                                                   bool originAtLeftUpperCorner)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, windowWidth, windowHeight, 0, 0, 1);
+    if (originAtLeftUpperCorner)
+        glOrtho(0, windowWidth, windowHeight, 0, 0, 1);
+    else
+        glOrtho(0, windowWidth, 0, windowHeight, 0, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     // Displacement trick for exact pixelization
     // http://basic4gl.wikispaces.com/2D+Drawing+in+OpenGL
     glTranslatef(0.375, 0.375, 0);    
+    
+    m_windowWidth = windowWidth;
+    m_windowHeight = windowHeight;
 }
 
 
@@ -120,8 +131,13 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight)
     drawTimeBar();
     glTranslatef(m_boardPos.x, m_boardPos.y, 0);
     drawDiamonds();
-    drawCrossOnRecentlyRemovedDiamonds();
-    drawPickedSquare();
+    
+    if (!gameOver()) {
+        drawCrossOnRecentlyRemovedDiamonds();
+        drawPickedSquare();
+    } else {
+        drawGameOver();
+    }
 }
 
 void BoardRenderer::drawBackground()
@@ -209,13 +225,13 @@ void BoardRenderer::drawDiamonds()
     glColorMask(1, 1, 1, 1);
     glStencilFunc(GL_EQUAL, 1, 1);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    
+
     //
     // Draw diamongd
     //
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     for (unsigned int i = 0; i < m_board.columns(); ++ i) {
         for (unsigned int j = 0; j < m_board.rows(); ++ j) {
             unsigned diamond = m_board(j, i);
@@ -244,6 +260,7 @@ void BoardRenderer::drawDiamonds()
         }
     }
     glDisable(GL_STENCIL_TEST);
+    glDisable(GL_TEXTURE_2D);
 }
 
 // Draw a X on the position when a diamond has just been removed
@@ -282,6 +299,54 @@ void BoardRenderer::drawPickedSquare()
     }
 }
 
+void BoardRenderer::drawGameOver()
+{
+    //
+    // Gray-out the diamonds
+    //
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0, 0, 0, 0.4f);
+    unsigned boardSize = m_board.size() * DIAMOND_SIZE;
+    glBegin(GL_QUADS);
+    glVertex2f(0, 0);
+    glVertex2f(boardSize, 0);
+    glVertex2f(boardSize, boardSize);
+    glVertex2f(0, boardSize);
+    glEnd();
+    
+    glPushMatrix();
+    // Reverse the model view matrix because glutStrokeCharacter assumes the origin
+    // is at the lower-left.
+    setupProjectAndModelViewMatrix(m_windowWidth, m_windowHeight, false);
+    
+    glColor4f(0, 1, 0, 1);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    
+    glPushMatrix();
+    glTranslatef(m_boardPos.x, m_windowHeight - m_boardPos.y - 100, 0);
+    glScalef(0.4f, 0.4f, 0.4f);    
+    glLineWidth(3);
+    const char* GAMEOVER = "GAME OVER";
+    const char* PRESS_ESC = "PRESS ESC TO LEAVE THE GAME";
+    for (unsigned i = 0; i < strlen(GAMEOVER); ++ i)
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, GAMEOVER[i]);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(m_boardPos.x - 10, m_windowHeight - m_boardPos.y - 200, 0);
+    glScalef(0.15f, 0.15f, 0.15f);    
+    glLineWidth(2);
+    for (unsigned i = 0; i < strlen(PRESS_ESC); ++ i)
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, PRESS_ESC[i]);    
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor4f(1, 1, 1, 1);
+}
+
 Vector2D BoardRenderer::getDiamondFixedPosition(const DiamondCoords& diamond) const
 {
     return Vector2D(diamond.col * DIAMOND_SIZE, diamond.row * DIAMOND_SIZE);
@@ -303,6 +368,7 @@ void BoardRenderer::countdown()
 {
     if (m_remainingTime > 0) {
         m_remainingTime -= COUNTDOWN_TIMER_INTERVAL;
+        if (m_remainingTime < 0) m_remainingTime = 0;
         glutPostRedisplay();
         setCountdownTimer();
     }
@@ -436,7 +502,7 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
 
 bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 {
-    if (anyAnimationInProgress() || m_remainingTime == 0) return false; 
+    if (anyAnimationInProgress() || gameOver()) return false; 
     
 #if !defined(USE_PICKING_BY_COLOR_ID)  
     int row = (y - m_boardPos.y) / DIAMOND_SIZE;

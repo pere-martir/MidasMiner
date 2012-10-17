@@ -78,18 +78,21 @@ public:
 private:
     static BoardRenderer* s_singleton;
     
+    unsigned m_windowWidth, m_windowHeight;
     unsigned m_backgroundWidth, m_backgroundHeight;
     GLuint m_backgroundTexture;
     std::vector<GLuint> m_diamondTextures;
     void loadTextures();
     bool initTextureFromRawImage(char *image, int width, int height, GLuint texName);
     
-    void setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight);
+    void setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight,
+                                        bool originAtLeftUpperCorner = true);
     void drawBackground();
     void drawDiamonds();
     void drawCrossOnRecentlyRemovedDiamonds();
     void drawPickedSquare();
     void drawTimeBar();
+    void drawGameOver();
     
     Vector2D m_boardPos;     // The offset of board in BackGround.png
     Vector2D getDiamondCurrentPosition(const DiamondCoords& diamond) const;
@@ -126,6 +129,7 @@ private:
     
     void setCountdownTimer();
     void countdown();
+    bool gameOver() { return m_remainingTime <= 0; }
     int m_totalTime; // ms
     int m_remainingTime; // ms
 
