@@ -9,12 +9,7 @@ BoardRenderer::BoardRenderer(Board& board) : m_board(board), m_boardPos(335, 110
     assert(NULL == BoardRenderer::s_singleton);
     BoardRenderer::s_singleton = this;
     m_board.setDelegate(this);
-
-    
     loadTextures();
-#if USE_PICKING_BY_COLOR_ID
-    initPickingByColorID();
-#endif
 }
 
 void BoardRenderer::loadTextures()
@@ -68,11 +63,8 @@ void BoardRenderer::loadTextures()
 
 bool BoardRenderer::initTextureFromRawImage(char *image, int width, int height, GLuint texName) 
 {
-    if (image == NULL)
-    {
-        return false;
-    }
-    
+    if (image == NULL) return false;
+
     printf("(loadTexture) width: %d height: %d\n", width, height); 
     
     glBindTexture(GL_TEXTURE_2D, texName);
@@ -117,6 +109,7 @@ void BoardRenderer::setupProjectAndModelViewMatrix(unsigned windowWidth,
         glOrtho(0, windowWidth, windowHeight, 0, 0, 1);
     else
         glOrtho(0, windowWidth, 0, windowHeight, 0, 1);
+    
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     // Displacement trick for exact pixelization
@@ -140,6 +133,7 @@ void BoardRenderer::draw(unsigned windowWidth, unsigned windowHeight,
     
     drawBackground();
     drawTimeBar(remainingTimePercentage);
+    
     glTranslatef(m_boardPos.x, m_boardPos.y, 0);
     drawDiamonds();
     
@@ -155,7 +149,6 @@ void BoardRenderer::drawBackground()
 {
     glEnable(GL_TEXTURE_2D); 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
     glBindTexture(GL_TEXTURE_2D, m_backgroundTexture);
     
     glBegin(GL_QUADS);
@@ -354,7 +347,7 @@ void BoardRenderer::drawGameOver()
         glutStrokeCharacter(GLUT_STROKE_ROMAN, PRESS_ESC[i]);    
     glPopMatrix();
     
-    glPushMatrix();
+    glPopMatrix();
     glColor4f(1, 1, 1, 1);
 }
 
