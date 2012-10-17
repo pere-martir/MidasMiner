@@ -271,18 +271,6 @@ void BoardRenderer::onDiamondsFallen(Board* sender,
     setTimer();
 }
 
-
-/*
-bool BoardRenderer::doesSprtesContainDiamond(const DiamondCoords& d) const
-{
-    SpritesArray::const_iterator s = m_sprites.begin();
-    for (; m_sprites.end() != s; ++ s) {
-        if (s->diamond == d) return true;
-    }
-    return false;
-}
-*/
-
 bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 {
 #if !defined(USE_PICKING_BY_COLOR_ID)
@@ -326,7 +314,9 @@ bool BoardRenderer::pickDiamond(unsigned x, unsigned y, DiamondCoords& coord)
 #endif
 }
 
-
+//
+// This is not used
+//
 #if USE_PICKING_BY_COLOR_ID
 void BoardRenderer::initPickingByColorID()
 {

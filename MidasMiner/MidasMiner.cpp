@@ -3,15 +3,12 @@
 
 void GLUTEventHandler::init(int argc, char** argv)
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glutCreateWindow("Midas Miner");
+#if 1
+    m_board.initRandomly(8, 5, m_randNumGenerator);
+#endif
     
 #if 0
-    m_board.initRandomly(4, 5, m_randNumGenerator);
-#else
-    /*
+    // Eliminate a horizonal line
     Matrix m;
     m.initWithElements(4, 4, 
                        3, 3, 1, 2,
@@ -23,9 +20,10 @@ void GLUTEventHandler::init(int argc, char** argv)
     future.initWithElements(1, 4, 
                        3, 4, 5, 1);
     m_board.setFutureMatrix(future);
-    */
+#endif
     
-    
+#if 0
+    // Eliminate a vertical line
     Matrix m;
     m.initWithElements(4, 4, 
                        2, 1, 2, 1,
@@ -41,6 +39,12 @@ void GLUTEventHandler::init(int argc, char** argv)
      m_board.setFutureMatrix(future);
     
 #endif
+    
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowSize(m_board.size() * BoardRenderer::DIAMOND_SIZE, 
+                       m_board.size() * BoardRenderer::DIAMOND_SIZE);
+    glutCreateWindow("Midas Miner");
 }
 
 void GLUTEventHandler::handleDisplay() 
@@ -49,7 +53,7 @@ void GLUTEventHandler::handleDisplay()
         m_renderer = new BoardRenderer(m_board);
     }
 
-    m_renderer->draw(WINDOW_WIDTH, WINDOW_HEIGHT); 
+    m_renderer->draw(m_windowWidth, m_windowHeight); 
     glutSwapBuffers();
 }
 

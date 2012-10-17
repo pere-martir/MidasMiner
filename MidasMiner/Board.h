@@ -124,7 +124,11 @@ public:
 // internal matrix to be modified by Matrix's setters.
 //
 public:
-   
+    unsigned size() const {
+        assert(columns() == rows());
+        return rows();
+    }
+    
     unsigned columns() const { return m_diamondMatrix.columns(); }
     unsigned rows() const { return m_diamondMatrix.rows(); }
 

@@ -18,16 +18,21 @@
 class GLUTEventHandler
 {
 public:
-    GLUTEventHandler() : m_renderer(NULL) {}
+    GLUTEventHandler() : m_renderer(NULL), m_windowWidth(0), m_windowHeight(0) {}
     void init(int argc, char** argv);
     void handleKeyboard(unsigned char key, int x, int y);
     void handleMouse(int button, int state, int x, int y);
     void handleDisplay();
+    void handleReshape(int width, int height) {
+        m_windowWidth = width;
+        m_windowHeight = height;
+        glViewport(0, 0, width, height);
+        glutPostRedisplay();
+    }
     void handleIdle() {}
     
 private:
-    static const unsigned WINDOW_WIDTH = 40 * 8;
-    static const unsigned WINDOW_HEIGHT = 40 * 8;
+    unsigned m_windowWidth, m_windowHeight;
     Board m_board;
     // Delay its creation until the first draw so that we don't have to 
     // load the textures when running the unit tests.

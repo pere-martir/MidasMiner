@@ -49,9 +49,9 @@ struct Vector2D
 
 struct Sprite
 {
-    DiamondCoords diamond;
-    Vector2D pos;
-    Vector2D velocity;
+    DiamondCoords diamond; // the final coordinates
+    Vector2D pos; // the current position
+    Vector2D velocity; // velocity is added periodically to pos until pos reaches finalPos
     Vector2D finalPos;
 };
 
@@ -60,6 +60,8 @@ typedef std::vector<Sprite> SpritesArray;
 class BoardRenderer : public BoardDelegate
 {
 public:
+    static const unsigned int DIAMOND_SIZE = 40; // FIXME
+    
     static BoardRenderer* getSingleton() 
     { 
         assert(s_singleton);
@@ -72,7 +74,6 @@ public:
     bool pickDiamond(unsigned x, unsigned y, DiamondCoords& coord);
     
 private:
-    static const unsigned int DIAMOND_SIZE = 40; // FIXME
     static BoardRenderer* s_singleton;
     
     void setupProjectAndModelViewMatrix(unsigned windowWidth, unsigned windowHeight);
@@ -90,7 +91,6 @@ private:
     
     Board::Animaton m_currentAnimation;
     SpritesArray m_sprites;
-    //bool doesSprtesContainDiamond(const DiamondCoords& d) const;
     
     static void glutTimerHandler(int value) 
     {
